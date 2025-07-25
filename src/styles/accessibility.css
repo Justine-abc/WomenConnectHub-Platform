@@ -1,0 +1,8 @@
+/* accessibility.css - A11y-focused styles */
+:focus {
+  outline: 2px solid var(--secondary-color);
+  outline-offset: 2px;
+}
+[aria-label] {
+  cursor: pointer;
+}

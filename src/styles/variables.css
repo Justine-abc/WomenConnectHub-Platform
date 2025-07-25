@@ -1,0 +1,8 @@
+/* variables.css - CSS custom properties */
+:root {
+  --primary-color: #1976d2;
+  --secondary-color: #f50057;
+  --background-color: #f9f9f9;
+  --text-color: #222;
+  --border-radius: 8px;
+}
