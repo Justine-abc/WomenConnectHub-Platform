@@ -23,11 +23,9 @@ const Header = ({ user, onLogout, currentPath = '/' }) => {
           {/* Logo/Brand */}
           <div className="nav-brand-container">
             <a href="/" className="nav-brand" onClick={closeMobileMenu}>
-              <span className="sr-only">WomenConnect Hub - </span>
-              WomenConnect Hub
+              <span className="sr-only">WomenConnect Hub</span>
             </a>
             <p className="nav-tagline">
-              Empowering African Women Entrepreneurs
             </p>
           </div>
 
