@@ -1,9 +1,5 @@
-// WomenConnect Hub - Header Component
-// Main navigation header for the platform
-
 import React, { useState } from 'react';
-import { Container } from '../ui/index.js';
-import Navigation from './Navigation.js';
+import { Link } from 'react-router-dom';
 
 const Header = ({ user, onLogout, currentPath = '/' }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -17,153 +13,124 @@ const Header = ({ user, onLogout, currentPath = '/' }) => {
   };
 
   return (
-    <header className="header" role="banner">
-      <Container>
-        <div className="flex-between">
-          {/* Logo/Brand */}
-          <div className="nav-brand-container">
-            <a href="/" className="nav-brand" onClick={closeMobileMenu}>
-              <span className="sr-only">WomenConnect Hub</span>
-            </a>
-            <p className="nav-tagline">
-            </p>
+    <header className="bg-blue-800 text-white sticky top-0 z-50 shadow-lg">
+      <div className="max-w-7xl mx-auto px-4">
+        <div className="flex items-center justify-between h-16">
+          {/* Logo Section */}
+          <div className="flex-shrink-0">
+            <Link to="/" className="flex items-center text-white no-underline" onClick={closeMobileMenu}>
+              <span className="bg-white text-blue-800 px-3 py-2 rounded-md font-bold text-xl">
+                WCH
+              </span>
+            </Link>
           </div>
 
           {/* Desktop Navigation */}
-          <div className="nav-desktop">
-            <Navigation 
-              user={user} 
-              onLogout={onLogout} 
-              currentPath={currentPath}
-              isMobile={false}
-              onLinkClick={closeMobileMenu}
-            />
-          </div>
+          <nav className="hidden md:flex items-center space-x-8 flex-1 justify-center">
+            <Link to="/" className={`text-white no-underline font-medium py-2 transition-colors hover:text-yellow-400 ${currentPath === '/' ? 'text-yellow-400 border-b-2 border-yellow-400' : ''}`}>
+              Home
+            </Link>
+            <Link to="/projects" className={`text-white no-underline font-medium py-2 transition-colors hover:text-yellow-400 ${currentPath === '/projects' ? 'text-yellow-400 border-b-2 border-yellow-400' : ''}`}>
+              Projects
+            </Link>
+            <Link to="/entrepreneurs" className={`text-white no-underline font-medium py-2 transition-colors hover:text-yellow-400 ${currentPath === '/entrepreneurs' ? 'text-yellow-400 border-b-2 border-yellow-400' : ''}`}>
+              Entrepreneurs
+            </Link>
+            <Link to="/investors" className={`text-white no-underline font-medium py-2 transition-colors hover:text-yellow-400 ${currentPath === '/investors' ? 'text-yellow-400 border-b-2 border-yellow-400' : ''}`}>
+              Investors
+            </Link>
+            <Link to="/about" className={`text-white no-underline font-medium py-2 transition-colors hover:text-yellow-400 ${currentPath === '/about' ? 'text-yellow-400 border-b-2 border-yellow-400' : ''}`}>
+              About
+            </Link>
+            <Link to="/contact" className={`text-white no-underline font-medium py-2 transition-colors hover:text-yellow-400 ${currentPath === '/contact' ? 'text-yellow-400 border-b-2 border-yellow-400' : ''}`}>
+              Contact
+            </Link>
+          </nav>
 
-          {/* Mobile Menu Button */}
-          <button
-            className="menu-toggle nav-mobile"
-            onClick={toggleMobileMenu}
-            aria-expanded={isMobileMenuOpen}
-            aria-controls="mobile-menu"
-            aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
-          >
-            <span className={`hamburger ${isMobileMenuOpen ? 'active' : ''}`}>
-              <span></span>
-              <span></span>
-              <span></span>
-            </span>
-          </button>
+          {/* Right Section */}
+          <div className="flex items-center space-x-4">
+            {user ? (
+              <div className="hidden md:flex items-center space-x-4">
+                <Link to="/dashboard" className="text-white no-underline py-2 px-4 rounded-md transition-colors hover:bg-white hover:bg-opacity-10">
+                  Dashboard
+                </Link>
+                <button onClick={onLogout} className="border border-white text-white py-2 px-4 rounded-md cursor-pointer transition-all hover:bg-white hover:text-blue-800">
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <div className="hidden md:flex items-center space-x-4">
+                <Link to="/login" className="text-white no-underline py-2 px-4 rounded-md transition-colors hover:bg-white hover:bg-opacity-10">
+                  Login
+                </Link>
+                <Link to="/register" className="bg-yellow-400 text-blue-800 no-underline py-2 px-4 rounded-md font-semibold transition-colors hover:bg-yellow-500">
+                  Sign Up
+                </Link>
+              </div>
+            )}
+
+            {/* Mobile Menu Button */}
+            <button
+              className="md:hidden flex bg-transparent border-none text-white cursor-pointer p-2"
+              onClick={toggleMobileMenu}
+              aria-expanded={isMobileMenuOpen}
+              aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+            >
+              <div className={`flex flex-col w-6 h-5 justify-between ${isMobileMenuOpen ? 'transform' : ''}`}>
+                <span className={`block h-0.5 w-full bg-white rounded transition-all duration-300 ${isMobileMenuOpen ? 'rotate-45 translate-y-2' : ''}`}></span>
+                <span className={`block h-0.5 w-full bg-white rounded transition-all duration-300 ${isMobileMenuOpen ? 'opacity-0' : ''}`}></span>
+                <span className={`block h-0.5 w-full bg-white rounded transition-all duration-300 ${isMobileMenuOpen ? '-rotate-45 -translate-y-2' : ''}`}></span>
+              </div>
+            </button>
+          </div>
         </div>
 
-        {/* Mobile Navigation */}
+        {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div id="mobile-menu" className="mobile-menu nav-mobile">
-            <Navigation 
-              user={user} 
-              onLogout={onLogout} 
-              currentPath={currentPath}
-              isMobile={true}
-              onLinkClick={closeMobileMenu}
-            />
+          <div className="md:hidden bg-blue-800 border-t border-white border-opacity-20 shadow-lg">
+            <nav className="flex flex-col p-4 space-y-2">
+              <Link to="/" className="text-white no-underline py-3 px-4 rounded-md transition-colors hover:bg-white hover:bg-opacity-10" onClick={closeMobileMenu}>
+                Home
+              </Link>
+              <Link to="/projects" className="text-white no-underline py-3 px-4 rounded-md transition-colors hover:bg-white hover:bg-opacity-10" onClick={closeMobileMenu}>
+                Projects
+              </Link>
+              <Link to="/entrepreneurs" className="text-white no-underline py-3 px-4 rounded-md transition-colors hover:bg-white hover:bg-opacity-10" onClick={closeMobileMenu}>
+                Entrepreneurs
+              </Link>
+              <Link to="/investors" className="text-white no-underline py-3 px-4 rounded-md transition-colors hover:bg-white hover:bg-opacity-10" onClick={closeMobileMenu}>
+                Investors
+              </Link>
+              <Link to="/about" className="text-white no-underline py-3 px-4 rounded-md transition-colors hover:bg-white hover:bg-opacity-10" onClick={closeMobileMenu}>
+                About
+              </Link>
+              <Link to="/contact" className="text-white no-underline py-3 px-4 rounded-md transition-colors hover:bg-white hover:bg-opacity-10" onClick={closeMobileMenu}>
+                Contact
+              </Link>
+              
+              {user ? (
+                <>
+                  <Link to="/dashboard" className="text-white no-underline py-3 px-4 rounded-md transition-colors hover:bg-white hover:bg-opacity-10" onClick={closeMobileMenu}>
+                    Dashboard
+                  </Link>
+                  <button onClick={onLogout} className="border border-white text-white py-3 px-4 rounded-md cursor-pointer transition-all hover:bg-white hover:text-blue-800 mt-2">
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link to="/login" className="text-white no-underline py-3 px-4 rounded-md transition-colors hover:bg-white hover:bg-opacity-10" onClick={closeMobileMenu}>
+                    Login
+                  </Link>
+                  <Link to="/register" className="bg-yellow-400 text-blue-800 no-underline py-3 px-4 rounded-md font-semibold transition-colors hover:bg-yellow-500" onClick={closeMobileMenu}>
+                    Sign Up
+                  </Link>
+                </>
+              )}
+            </nav>
           </div>
         )}
-      </Container>
-
-      <style jsx>{`
-        .nav-brand-container {
-          display: flex;
-          flex-direction: column;
-        }
-
-        .nav-brand {
-          font-size: var(--font-size-lg);
-          font-weight: 700;
-          color: #2563eb;
-          text-decoration: none;
-          transition: color 0.2s ease;
-        }
-
-        .nav-brand:hover,
-        .nav-brand:focus {
-          color: #1d4ed8;
-        }
-
-        .nav-tagline {
-          font-size: var(--font-size-xs);
-          color: #6b7280;
-          margin: 0;
-          display: none;
-        }
-
-        .hamburger {
-          display: flex;
-          flex-direction: column;
-          width: 24px;
-          height: 18px;
-          justify-content: space-between;
-          cursor: pointer;
-        }
-
-        .hamburger span {
-          display: block;
-          height: 3px;
-          width: 100%;
-          background: #374151;
-          border-radius: 2px;
-          transition: all 0.3s ease;
-        }
-
-        .hamburger.active span:nth-child(1) {
-          transform: rotate(45deg) translate(5px, 5px);
-        }
-
-        .hamburger.active span:nth-child(2) {
-          opacity: 0;
-        }
-
-        .hamburger.active span:nth-child(3) {
-          transform: rotate(-45deg) translate(7px, -6px);
-        }
-
-        .mobile-menu {
-          position: absolute;
-          top: 100%;
-          left: 0;
-          right: 0;
-          background: #ffffff;
-          border-top: 1px solid #e5e7eb;
-          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-          z-index: 50;
-        }
-
-        @media (min-width: 768px) {
-          .nav-tagline {
-            display: block;
-          }
-
-          .nav-brand {
-            font-size: var(--font-size-xl);
-          }
-        }
-
-        /* Focus indicators for accessibility */
-        .menu-toggle:focus {
-          outline: var(--focus-ring);
-          outline-offset: 2px;
-        }
-
-        /* High contrast mode support */
-        @media (prefers-contrast: high) {
-          .nav-brand {
-            border-bottom: 2px solid transparent;
-          }
-          
-          .nav-brand:focus {
-            border-bottom-color: currentColor;
-          }
-        }
-      `}</style>
+      </div>
     </header>
   );
 };
