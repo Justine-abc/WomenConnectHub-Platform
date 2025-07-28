@@ -1,25 +1,39 @@
-// useApi.js - API calls hook
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import apiService from '../services/api';
 
-const useApi = (apiFunc) => {
+export const useApi = (endpoint, options = {}) => {
   const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const callApi = async (...args) => {
-    setLoading(true);
-    setError(null);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const result = await apiService.request(endpoint, options);
+        setData(result);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [endpoint]);
+
+  const refetch = async () => {
     try {
-      const result = await apiFunc(...args);
+      setLoading(true);
+      setError(null);
+      const result = await apiService.request(endpoint, options);
       setData(result);
     } catch (err) {
-      setError(err);
+      setError(err.message);
     } finally {
       setLoading(false);
     }
   };
 
-  return { data, loading, error, callApi };
-};
-
-export default useApi;
+  return { data, loading, error, refetch };};
