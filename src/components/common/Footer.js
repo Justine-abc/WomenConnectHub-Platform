@@ -8,15 +8,6 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   const footerSections = {
-    platform: {
-      title: 'Platform',
-      links: [
-        { href: '/', label: 'Home' },
-        { href: '/projects', label: 'Browse Projects' },
-        { href: '/about', label: 'About Us' },
-        { href: '/help', label: 'Help & Guide' }
-      ]
-    },
     entrepreneurs: {
       title: 'For Entrepreneurs',
       links: [
@@ -35,15 +26,7 @@ const Footer = () => {
         { href: '/impact', label: 'Impact Stories' }
       ]
     },
-    support: {
-      title: 'Support',
-      links: [
-        { href: '/contact', label: 'Contact Us' },
-        { href: '/faq', label: 'FAQ' },
-        { href: '/privacy', label: 'Privacy Policy' },
-        { href: '/terms', label: 'Terms of Service' }
-      ]
-    }
+
   };
 
   const socialLinks = [
