@@ -9,3 +9,18 @@ body {
   background: #f9f9f9;
   color: #222;
 }
+
+.dashboard-page, .profile-page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.dashboard-page h1, .profile-page h1 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.dashboard-page p, .profile-page p {
+  color: #555;
+}
