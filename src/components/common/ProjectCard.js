@@ -2,6 +2,15 @@ import React from 'react';
 import { createGoogleDriveViewUrl } from '../../utils/urlHelpers';
 
 const ProjectCard = ({ project, onClick, className = "" }) => {
+  // Handle case where project might be undefined
+  if (!project) {
+    return (
+      <div className={`bg-white rounded-xl shadow-md p-6 ${className}`}>
+        <div className="text-gray-500 text-center">No project data available</div>
+      </div>
+    );
+  }
+
   const imageUrl = createGoogleDriveViewUrl(project.imageUrl);
   
   const handleClick = () => {
@@ -11,6 +20,7 @@ const ProjectCard = ({ project, onClick, className = "" }) => {
   };
 
   const formatCurrency = (amount) => {
+    if (!amount) return '$0';
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
@@ -30,21 +40,25 @@ const ProjectCard = ({ project, onClick, className = "" }) => {
       onClick={handleClick}
     >
       {/* Project Image */}
-      <div className="relative aspect-w-16 aspect-h-9 overflow-hidden rounded-t-xl">
+      <div className="relative overflow-hidden rounded-t-xl">
         {imageUrl ? (
           <img 
             src={imageUrl} 
-            alt={project.title}
+            alt={project.title || 'Project image'}
             className="w-full h-48 object-cover"
+            onError={(e) => {
+              e.target.style.display = 'none';
+              e.target.nextSibling.style.display = 'flex';
+            }}
           />
-        ) : (
-          <div className="w-full h-48 bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
-            <div className="text-center">
-              <span className="text-4xl mb-2 block">🚀</span>
-              <span className="text-gray-500 text-sm">Project Image</span>
-            </div>
+        ) : null}
+        
+        <div className="w-full h-48 bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center" style={{ display: imageUrl ? 'none' : 'flex' }}>
+          <div className="text-center">
+            <span className="text-4xl mb-2 block">🚀</span>
+            <span className="text-gray-500 text-sm">Project Image</span>
           </div>
-        )}
+        </div>
         
         {/* Category Badge */}
         {project.category && (
@@ -72,13 +86,13 @@ const ProjectCard = ({ project, onClick, className = "" }) => {
       
       <div className="p-5">
         {/* Project Title */}
-        <h3 className="font-bold text-lg text-gray-900 mb-2 line-clamp-2 leading-tight">
-          {project.title}
+        <h3 className="font-bold text-lg text-gray-900 mb-2 leading-tight">
+          {project.title || 'Untitled Project'}
         </h3>
         
         {/* Project Description */}
-        <p className="text-gray-600 text-sm mb-4 line-clamp-3 leading-relaxed">
-          {project.description}
+        <p className="text-gray-600 text-sm mb-4 leading-relaxed overflow-hidden" style={{ display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical' }}>
+          {project.description || 'No description available'}
         </p>
         
         {/* Funding Progress */}
@@ -108,10 +122,12 @@ const ProjectCard = ({ project, onClick, className = "" }) => {
         )}
         
         {/* Location */}
-        <div className="flex items-center gap-2 mb-4">
-          <span className="text-gray-400">📍</span>
-          <span className="text-sm text-gray-600">{project.location}</span>
-        </div>
+        {project.location && (
+          <div className="flex items-center gap-2 mb-4">
+            <span className="text-gray-400">📍</span>
+            <span className="text-sm text-gray-600">{project.location}</span>
+          </div>
+        )}
         
         {/* Entrepreneur Info */}
         <div className="flex items-center justify-between">
@@ -124,7 +140,7 @@ const ProjectCard = ({ project, onClick, className = "" }) => {
                 {project.entrepreneur?.name || 'Anonymous'}
               </span>
               <span className="text-xs text-gray-500">
-                {project.entrepreneur?.location || project.location}
+                {project.entrepreneur?.location || project.location || 'Location not specified'}
               </span>
             </div>
           </div>
@@ -136,8 +152,10 @@ const ProjectCard = ({ project, onClick, className = "" }) => {
               onClick={(e) => {
                 e.stopPropagation();
                 // Handle bookmark/favorite
+                console.log('Bookmarked project:', project.id);
               }}
               title="Bookmark project"
+              aria-label="Bookmark project"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
@@ -149,8 +167,10 @@ const ProjectCard = ({ project, onClick, className = "" }) => {
               onClick={(e) => {
                 e.stopPropagation();
                 // Handle share
+                console.log('Shared project:', project.id);
               }}
               title="Share project"
+              aria-label="Share project"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" />
@@ -166,6 +186,7 @@ const ProjectCard = ({ project, onClick, className = "" }) => {
             onClick={(e) => {
               e.stopPropagation();
               // Handle invest action
+              console.log('Invest clicked for project:', project.id);
             }}
           >
             💰 Invest Now

@@ -1,4 +1,9 @@
 /**
+ * URL Helper Functions
+ * Contains utilities for validating and manipulating URLs
+ */
+
+/**
  * Validates if a URL is a valid Google Drive link
  * @param {string} url - The URL to validate
  * @returns {boolean} - True if valid Google Drive URL
@@ -10,37 +15,46 @@ export const validateGoogleDriveUrl = (url) => {
     /^https:\/\/drive\.google\.com\/file\/d\/[a-zA-Z0-9_-]+/,
     /^https:\/\/docs\.google\.com\/document\/d\/[a-zA-Z0-9_-]+/,
     /^https:\/\/docs\.google\.com\/spreadsheets\/d\/[a-zA-Z0-9_-]+/,
-    /^https:\/\/docs\.google\.com\/presentation\/d\/[a-zA-Z0-9_-]+/,
+    /^https:\/\/docs\.google\.com\/presentation\/d\/[a-zA-Z0-9_-]+/
   ];
   
   return googleDrivePatterns.some(pattern => pattern.test(url));
 };
 
 /**
- * Converts Google Drive sharing URL to direct image URL
- * @param {string} url - Google Drive sharing URL
- * @returns {string} - Direct image URL or original URL if conversion fails
+ * Validates if a URL is a valid YouTube link
+ * @param {string} url - The URL to validate
+ * @returns {boolean} - True if valid YouTube URL
  */
-export const convertGoogleDriveUrl = (url) => {
-  if (!url || !validateGoogleDriveUrl(url)) return url;
+export const validateYouTubeUrl = (url) => {
+  if (!url || typeof url !== 'string') return false;
   
-  try {
-    const fileIdMatch = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
-    if (fileIdMatch && fileIdMatch[1]) {
-      const fileId = fileIdMatch[1];
-      return `https://drive.google.com/uc?export=view&id=${fileId}`;
-    }
-  } catch (error) {
-    console.error('Error converting Google Drive URL:', error);
-  }
+  const youtubePatterns = [
+    /^https:\/\/(www\.)?youtube\.com\/watch\?v=[a-zA-Z0-9_-]+/,
+    /^https:\/\/youtu\.be\/[a-zA-Z0-9_-]+/,
+    /^https:\/\/(www\.)?youtube\.com\/embed\/[a-zA-Z0-9_-]+/,
+    /^https:\/\/(www\.)?youtube\.com\/v\/[a-zA-Z0-9_-]+/
+  ];
   
-  return url;
+  return youtubePatterns.some(pattern => pattern.test(url));
+};
+
+/**
+ * Validates if a string is a valid email address
+ * @param {string} email - The email to validate
+ * @returns {boolean} - True if valid email
+ */
+export const validateEmail = (email) => {
+  if (!email || typeof email !== 'string') return false;
+  
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailPattern.test(email);
 };
 
 /**
  * Validates if a URL is a valid web URL
  * @param {string} url - The URL to validate
- * @returns {boolean} - True if valid URL
+ * @returns {boolean} - True if valid web URL
  */
 export const validateWebUrl = (url) => {
   if (!url || typeof url !== 'string') return false;
@@ -53,54 +67,93 @@ export const validateWebUrl = (url) => {
   }
 };
 
-/**
- * Validates if a URL is a valid email
- * @param {string} email - The email to validate
- * @returns {boolean} - True if valid email
- */
-export const validateEmail = (email) => {
-  if (!email || typeof email !== 'string') return false;
-  
-  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailPattern.test(email);
-};
+
 
 /**
  * Validates social media URLs
  * @param {string} url - The URL to validate
- * @param {string} platform - The platform (linkedin, twitter, instagram, facebook)
+ * 
  * @returns {boolean} - True if valid social media URL
  */
-export const validateSocialMediaUrl = (url, platform) => {
+export const validateSocialMediaUrl = (url) => {
   if (!url || typeof url !== 'string') return false;
   
-  const patterns = {
-    linkedin: /^https:\/\/(www\.)?linkedin\.com\/(in|company)\/[a-zA-Z0-9_-]+\/?$/,
-    twitter: /^https:\/\/(www\.)?twitter\.com\/[a-zA-Z0-9_]+\/?$/,
-    instagram: /^https:\/\/(www\.)?instagram\.com\/[a-zA-Z0-9_.]+\/?$/,
-    facebook: /^https:\/\/(www\.)?facebook\.com\/[a-zA-Z0-9.]+\/?$/,
-  };
+  const socialMediaPatterns = [
+    
+    /^https:\/\/(www\.)?linkedin\.com\/(in|company)\/[a-zA-Z0-9-]+/,
+    /^https:\/\/(www\.)?tiktok\.com\/@[a-zA-Z0-9._]+/
+  ];
   
-  const pattern = patterns[platform.toLowerCase()];
-  return pattern ? pattern.test(url) : validateWebUrl(url);
+  return socialMediaPatterns.some(pattern => pattern.test(url));
 };
 
 /**
- * Extracts file ID from Google Drive URL
+ * Converts Google Drive shareable link to direct view link
+ * @param {string} url - Google Drive shareable URL
+ * @returns {string} - Direct view URL
+ */
+export const convertGoogleDriveUrl = (url) => {
+  if (!validateGoogleDriveUrl(url)) return url;
+  
+  // Extract file ID from various Google Drive URL formats
+  const fileIdMatch = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+  if (fileIdMatch) {
+    const fileId = fileIdMatch[1];
+    return `https://drive.google.com/uc?export=view&id=${fileId}`;
+  }
+  
+  return url;
+};
+
+/**
+ * Creates a Google Drive view URL from file ID
+ * @param {string} fileId - Google Drive file ID
+ * @returns {string} - View URL
+ */
+export const createGoogleDriveViewUrl = (fileId) => {
+  return `https://drive.google.com/uc?export=view&id=${fileId}`;
+};
+
+/**
+ * Extracts Google Drive file ID from URL
  * @param {string} url - Google Drive URL
- * @returns {string|null} - File ID or null if not found
+ * @returns {string|null} - File ID or null
  */
 export const extractGoogleDriveFileId = (url) => {
-  if (!url || !validateGoogleDriveUrl(url)) return null;
+  if (!url || typeof url !== 'string') return null;
   
   const fileIdMatch = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
   return fileIdMatch ? fileIdMatch[1] : null;
 };
 
 /**
- * Formats URL for display (truncates long URLs)
- * @param {string} url - The URL to format
- * @param {number} maxLength - Maximum length to display
+ * Extracts YouTube video ID from URL
+ * @param {string} url - YouTube URL
+ * @returns {string|null} - Video ID or null
+ */
+export const extractYouTubeId = (url) => {
+  if (!url || typeof url !== 'string') return null;
+  
+  // Handle different YouTube URL formats
+  const patterns = [
+    /(?:https?:\/\/)?(?:www\.)?youtube\.com\/watch\?v=([a-zA-Z0-9_-]+)/,
+    /(?:https?:\/\/)?youtu\.be\/([a-zA-Z0-9_-]+)/,
+    /(?:https?:\/\/)?(?:www\.)?youtube\.com\/embed\/([a-zA-Z0-9_-]+)/,
+    /(?:https?:\/\/)?(?:www\.)?youtube\.com\/v\/([a-zA-Z0-9_-]+)/
+  ];
+  
+  for (const pattern of patterns) {
+    const match = url.match(pattern);
+    if (match) return match[1];
+  }
+  
+  return null;
+};
+
+/**
+ * Formats URL for display (truncates if too long)
+ * @param {string} url - URL to format
+ * @param {number} maxLength - Maximum length
  * @returns {string} - Formatted URL
  */
 export const formatUrlForDisplay = (url, maxLength = 50) => {
@@ -108,51 +161,37 @@ export const formatUrlForDisplay = (url, maxLength = 50) => {
   
   if (url.length <= maxLength) return url;
   
-  try {
-    const urlObj = new URL(url);
-    const domain = urlObj.hostname;
-    const path = urlObj.pathname;
-    
-    if (domain.length + 10 >= maxLength) {
-      return `${domain}...`;
-    }
-    
-    const remainingLength = maxLength - domain.length - 3; // 3 for "..."
-    const truncatedPath = path.length > remainingLength 
-      ? `${path.substring(0, remainingLength)}...`
-      : path;
-    
-    return `${domain}${truncatedPath}`;
-  } catch {
-    return url.length > maxLength ? `${url.substring(0, maxLength)}...` : url;
-  }
+  return url.substring(0, maxLength - 3) + '...';
 };
 
 /**
- * Checks if URL is an image
- * @param {string} url - The URL to check
- * @returns {boolean} - True if URL points to an image
+ * Checks if URL points to an image
+ * @param {string} url - URL to check
+ * @returns {boolean} - True if likely an image URL
  */
 export const isImageUrl = (url) => {
   if (!url || typeof url !== 'string') return false;
   
-  const imageExtensions = /\.(jpg|jpeg|png|gif|webp|svg|bmp|ico)(\?.*)?$/i;
-  return imageExtensions.test(url);
+  const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp', '.svg'];
+  const lowerUrl = url.toLowerCase();
+  
+  return imageExtensions.some(ext => lowerUrl.includes(ext));
 };
 
 /**
  * Generates a safe filename from a string
- * @param {string} filename - Original filename
+ * @param {string} str - String to convert
  * @returns {string} - Safe filename
  */
-export const generateSafeFilename = (filename) => {
-  if (!filename || typeof filename !== 'string') return 'file';
+export const generateSafeFilename = (str) => {
+  if (!str || typeof str !== 'string') return 'file';
   
-  return filename
+  return str
     .toLowerCase()
-    .replace(/[^a-z0-9.-]/g, '_')
-    .replace(/_+/g, '_')
-    .replace(/^_|_$/g, '');
+    .replace(/[^a-z0-9]/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '')
+    .substring(0, 50);
 };
 
 /**
@@ -166,12 +205,8 @@ export const buildQueryString = (params) => {
   const searchParams = new URLSearchParams();
   
   Object.entries(params).forEach(([key, value]) => {
-    if (value !== undefined && value !== null && value !== '') {
-      if (Array.isArray(value)) {
-        value.forEach(v => searchParams.append(key, v));
-      } else {
-        searchParams.append(key, value);
-      }
+    if (value !== null && value !== undefined && value !== '') {
+      searchParams.append(key, String(value));
     }
   });
   
@@ -181,8 +216,8 @@ export const buildQueryString = (params) => {
 
 /**
  * Parses query string to object
- * @param {string} queryString - Query string
- * @returns {Object} - Parameters object
+ * @param {string} queryString - Query string to parse
+ * @returns {Object} - Parsed parameters
  */
 export const parseQueryString = (queryString) => {
   if (!queryString || typeof queryString !== 'string') return {};
@@ -190,41 +225,33 @@ export const parseQueryString = (queryString) => {
   const params = {};
   const searchParams = new URLSearchParams(queryString.startsWith('?') ? queryString.slice(1) : queryString);
   
-  for (const [key, value] of searchParams.entries()) {
-    if (params[key]) {
-      if (Array.isArray(params[key])) {
-        params[key].push(value);
-      } else {
-        params[key] = [params[key], value];
-      }
-    } else {
-      params[key] = value;
-    }
-  }
+  searchParams.forEach((value, key) => {
+    params[key] = value;
+  });
   
   return params;
 };
 
 /**
- * Gets domain from URL
- * @param {string} url - The URL
- * @returns {string} - Domain or empty string
+ * Extracts domain from URL
+ * @param {string} url - URL to extract domain from
+ * @returns {string|null} - Domain or null
  */
 export const getDomainFromUrl = (url) => {
-  if (!url || typeof url !== 'string') return '';
+  if (!url || typeof url !== 'string') return null;
   
   try {
     const urlObj = new URL(url);
     return urlObj.hostname;
   } catch {
-    return '';
+    return null;
   }
 };
 
 /**
- * Adds protocol to URL if missing
- * @param {string} url - The URL
- * @param {string} protocol - Default protocol (default: 'https')
+ * Ensures URL has protocol
+ * @param {string} url - URL to check
+ * @param {string} protocol - Default protocol
  * @returns {string} - URL with protocol
  */
 export const ensureProtocol = (url, protocol = 'https') => {
@@ -238,33 +265,31 @@ export const ensureProtocol = (url, protocol = 'https') => {
 };
 
 /**
- * Validates and sanitizes URL input
- * @param {string} url - The URL to sanitize
+ * Sanitizes URL by removing potentially harmful characters
+ * @param {string} url - URL to sanitize
  * @returns {string} - Sanitized URL
  */
 export const sanitizeUrl = (url) => {
   if (!url || typeof url !== 'string') return '';
   
-  // Remove dangerous protocols
-  const dangerousProtocols = ['javascript:', 'data:', 'vbscript:', 'file:'];
-  const lowercaseUrl = url.toLowerCase().trim();
-  
-  for (const protocol of dangerousProtocols) {
-    if (lowercaseUrl.startsWith(protocol)) {
-      return '';
-    }
-  }
-  
-  return url.trim();
+  // Remove potentially harmful characters
+  return url
+    .replace(/[<>'"]/g, '')
+    .replace(/javascript:/gi, '')
+    .replace(/data:/gi, '')
+    .trim();
 };
 
-export default {
+const urlHelpers = {
   validateGoogleDriveUrl,
-  convertGoogleDriveUrl,
-  validateWebUrl,
+  validateYouTubeUrl,
   validateEmail,
+  validateWebUrl,
   validateSocialMediaUrl,
+  convertGoogleDriveUrl,
+  createGoogleDriveViewUrl,
   extractGoogleDriveFileId,
+  extractYouTubeId,
   formatUrlForDisplay,
   isImageUrl,
   generateSafeFilename,
@@ -274,3 +299,5 @@ export default {
   ensureProtocol,
   sanitizeUrl,
 };
+
+export default urlHelpers;
