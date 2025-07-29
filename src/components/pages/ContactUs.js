@@ -1,437 +1,446 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useAuth } from '../auth/AuthProvider';
-import AuthModal from '../auth/AuthModal';
-import ProjectCard from '../common/ProjectCard';
-import SearchBar from '../common/SearchBar';
+
 import Footer from '../common/Footer';
 
-const HomePage = () => {
-  const { user, isAuthenticated } = useAuth();
-  const [showAuthModal, setShowAuthModal] = useState(false);
-  const [authMode, setAuthMode] = useState('login');
-  const [searchResults, setSearchResults] = useState(null);
+const ContactUs = () => {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    subject: '',
+    category: '',
+    message: '',
+    phone: '',
+    company: ''
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [errors, setErrors] = useState({});
 
-  // Mock data for featured projects
-  const featuredProjects = [
-    {
-      id: 1,
-      title: "EcoFriendly Fashion Line",
-      description: "Sustainable clothing made from recycled materials, empowering local artisans while protecting our environment. Join us in revolutionizing fashion with eco-conscious designs.",
-      category: "fashion",
-      location: "Nairobi, Kenya",
-      fundingGoal: 15000,
-      raisedAmount: 8500,
-      imageUrl: "https://drive.google.com/file/d/sample1",
-      entrepreneur: {
-        name: "Sarah Wanjiku",
-        location: "Nairobi, Kenya"
-      },
-      status: "active",
-      daysLeft: 25
-    },
-    {
-      id: 2,
-      title: "Smart Agriculture IoT System",
-      description: "Innovative IoT-based system for small-scale farmers to monitor soil moisture, weather conditions, and crop health remotely using mobile technology.",
-      category: "technology",
-      location: "Lagos, Nigeria",
-      fundingGoal: 25000,
-      raisedAmount: 12000,
-      imageUrl: "https://drive.google.com/file/d/sample2",
-      entrepreneur: {
-        name: "Adunni Olatunji",
-        location: "Lagos, Nigeria"
-      },
-      status: "active",
-      daysLeft: 18
-    },
-    {
-      id: 3,
-      title: "Artisan Craft Marketplace",
-      description: "Digital platform connecting African artisans with global markets, featuring handmade crafts, jewelry, and traditional art pieces.",
-      category: "crafts",
-      location: "Cape Town, South Africa",
-      fundingGoal: 10000,
-      raisedAmount: 10000,
-      imageUrl: "https://drive.google.com/file/d/sample3",
-      entrepreneur: {
-        name: "Nomsa Mthembu",
-        location: "Cape Town, South Africa"
-      },
-      status: "funded",
-      daysLeft: 0
-    },
-    {
-      id: 4,
-      title: "Organic Skincare Products",
-      description: "Natural skincare line using indigenous African plants and traditional beauty secrets passed down through generations.",
-      category: "beauty",
-      location: "Accra, Ghana",
-      fundingGoal: 8000,
-      raisedAmount: 5200,
-      imageUrl: "https://drive.google.com/file/d/sample4",
-      entrepreneur: {
-        name: "Akosua Mensah",
-        location: "Accra, Ghana"
-      },
-      status: "active",
-      daysLeft: 35
-    }
-  ];
-
-  const handleSearch = (searchParams) => {
-    // Mock search functionality
-    console.log('Search params:', searchParams);
-    setSearchResults(featuredProjects.filter(project => 
-      project.title.toLowerCase().includes(searchParams.query.toLowerCase()) ||
-      project.description.toLowerCase().includes(searchParams.query.toLowerCase())
-    ));
-  };
-
-  const handleGetStarted = () => {
-    if (isAuthenticated()) {
-      // Redirect based on user type
-      if (user.type === 'entrepreneur') {
-        window.location.href = '/dashboard';
-      } else {
-        window.location.href = '/projects';
-      }
-    } else {
-      setAuthMode('register');
-      setShowAuthModal(true);
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+    
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: '' }));
     }
   };
 
-  const stats = [
-    { number: '150+', label: 'Women Entrepreneurs', icon: '👩‍💼' },
-    { number: '85+', label: 'Funded Projects', icon: '🚀' },
-    { number: '$2.3M+', label: 'Total Funding', icon: '💰' },
-    { number: '15+', label: 'African Countries', icon: '🌍' }
-  ];
+  const validateForm = () => {
+    const newErrors = {};
 
-  const features = [
+    if (!formData.name.trim()) {
+      newErrors.name = 'Name is required';
+    }
+
+    if (!formData.email.trim()) {
+      newErrors.email = 'Email is required';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = 'Please enter a valid email address';
+    }
+
+    if (!formData.subject.trim()) {
+      newErrors.subject = 'Subject is required';
+    }
+
+    if (!formData.category) {
+      newErrors.category = 'Please select a category';
+    }
+
+    if (!formData.message.trim()) {
+      newErrors.message = 'Message is required';
+    } else if (formData.message.trim().length < 10) {
+      newErrors.message = 'Message must be at least 10 characters';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+
+    setIsSubmitting(true);
+    
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      setSubmitSuccess(true);
+      setFormData({
+        name: '',
+        email: '',
+        subject: '',
+        category: '',
+        message: '',
+        phone: '',
+        company: ''
+      });
+      
+      // Hide success message after 5 seconds
+      setTimeout(() => setSubmitSuccess(false), 5000);
+      
+    } catch (error) {
+      setErrors({ submit: 'Failed to send message. Please try again.' });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const contactMethods = [
     {
-      icon: '🚀',
-      title: 'Launch Your Project',
-      description: 'Create compelling project profiles with business plans, goals, and showcase your vision to potential investors.'
+      icon: '📧',
+      title: 'Email Us',
+      description: 'Send us an email and we\'ll respond within 24 hours',
+      contact: 'info@womenconnecthub.com',
+      action: 'mailto:info@womenconnecthub.com'
     },
     {
-      icon: '💰',
-      title: 'Secure Funding',
-      description: 'Connect with investors who believe in women-led innovation and are ready to support your entrepreneurial journey.'
+      icon: '📞',
+      title: 'Call Us',
+      description: 'Speak directly with our support team',
+      contact: '+254 700 123 456',
+      action: 'tel:+254700123456'
     },
     {
-      icon: '🌍',
-      title: 'Global Network',
-      description: 'Join a community of like-minded women entrepreneurs across Africa and beyond, sharing knowledge and opportunities.'
+      icon: '💬',
+      title: 'Live Chat',
+      description: 'Chat with our team in real-time',
+      contact: 'Available Mon-Fri 9AM-6PM EAT',
+      action: '#'
     },
     {
-      icon: '📈',
-      title: 'Track Progress',
-      description: 'Monitor your project\'s performance, investor engagement, and funding milestones through our comprehensive dashboard.'
+      icon: '📍',
+      title: 'Visit Us',
+      description: 'Meet us at our office',
+      contact: 'Nairobi, Kenya',
+      action: '#'
     }
   ];
 
-  const testimonials = [
+  const faqItems = [
     {
-      name: "Grace Mutindi",
-      role: "Tech Entrepreneur",
-      location: "Nairobi, Kenya",
-      text: "WomenConnect Hub helped me raise $15,000 for my mobile app. The platform made it easy to connect with investors who understood my vision.",
-      project: "HealthTracker App",
-      avatar: "👩‍💻"
+      question: 'How do I register as an entrepreneur?',
+      answer: 'Click on the "Sign Up" button and select "Entrepreneur" as your user type. You\'ll need to provide your business certificate and complete your profile.'
     },
     {
-      name: "Fatima Al-Rashid",
-      role: "Fashion Designer",
-      location: "Cairo, Egypt",
-      text: "Thanks to this platform, I was able to scale my sustainable fashion brand and now employ 12 local artisans. It's been life-changing!",
-      project: "EcoChic Fashion",
-      avatar: "👗"
+      question: 'What types of projects can I submit?',
+      answer: 'We accept innovative projects across various categories including technology, agriculture, fashion, crafts, food & beverage, health & beauty, and education.'
     },
     {
-      name: "Amara Johnson",
-      role: "AgTech Innovator",
-      location: "Accra, Ghana",
-      text: "The mentorship and funding I received through WomenConnect Hub enabled me to launch my smart farming solution across 5 countries.",
-      project: "SmartFarm Solutions",
-      avatar: "🌱"
+      question: 'How does the investment process work?',
+      answer: 'Investors can browse projects, review business plans, and make investments directly through our platform. All transactions are secure and transparent.'
+    },
+    {
+      question: 'What fees do you charge?',
+      answer: 'We charge a small platform fee only when funding is successful. There are no upfront costs for entrepreneurs to list their projects.'
+    },
+    {
+      question: 'How do I track my investment?',
+      answer: 'Once you invest, you\'ll have access to a dashboard where you can track project progress, receive updates, and communicate with entrepreneurs.'
     }
   ];
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-blue-800 via-blue-700 to-blue-900 text-white">
-        <div className="max-w-7xl mx-auto px-4 py-20">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h1 className="text-4xl md:text-6xl font-bold leading-tight mb-6">
-                Empowering African Women 
-                <span className="text-yellow-400"> Entrepreneurs</span>
-              </h1>
-              <p className="text-xl md:text-2xl text-blue-100 mb-8 leading-relaxed">
-                Connect with investors, showcase your innovative projects, and join a thriving community 
-                of women building the future of Africa.
-              </p>
+      <div className="bg-gradient-to-r from-blue-800 to-blue-900 text-white py-16">
+        <div className="max-w-6xl mx-auto px-4 text-center">
+          <h1 className="text-4xl md:text-5xl font-bold mb-6">
+            Get in Touch with Us
+          </h1>
+          <p className="text-xl text-blue-100 max-w-3xl mx-auto leading-relaxed">
+            Have questions about our platform? Need help with your project or investment? 
+            We're here to support you on your entrepreneurial journey.
+          </p>
+        </div>
+      </div>
+
+      {/* Contact Methods */}
+      <div className="py-16">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">How Can We Help You?</h2>
+            <p className="text-lg text-gray-600">Choose the best way to reach us</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+            {contactMethods.map((method, index) => (
+              <div key={index} className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-6 text-center">
+                <div className="text-4xl mb-4">{method.icon}</div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">{method.title}</h3>
+                <p className="text-gray-600 text-sm mb-4">{method.description}</p>
+                <a
+                  href={method.action}
+                  className="text-blue-600 hover:text-blue-700 font-medium transition-colors"
+                >
+                  {method.contact}
+                </a>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Contact Form & FAQ */}
+      <div className="pb-16">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            {/* Contact Form */}
+            <div className="bg-white rounded-lg shadow-lg p-8">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">Send Us a Message</h2>
               
-              <div className="flex flex-col sm:flex-row gap-4 mb-12">
+              {submitSuccess && (
+                <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+                  <div className="flex items-center gap-2 text-green-700">
+                    <span>✅</span>
+                    <span className="font-medium">Message sent successfully!</span>
+                  </div>
+                  <p className="text-green-600 text-sm mt-1">
+                    We'll get back to you within 24 hours.
+                  </p>
+                </div>
+              )}
+
+              {errors.submit && (
+                <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6 text-red-700">
+                  {errors.submit}
+                </div>
+              )}
+
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Full Name *
+                    </label>
+                    <input
+                      type="text"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleInputChange}
+                      className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                        errors.name ? 'border-red-500' : 'border-gray-300'
+                      }`}
+                      placeholder="Your full name"
+                    />
+                    {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Email Address *
+                    </label>
+                    <input
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                        errors.email ? 'border-red-500' : 'border-gray-300'
+                      }`}
+                      placeholder="your.email@example.com"
+                    />
+                    {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Phone Number
+                    </label>
+                    <input
+                      type="tel"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleInputChange}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="+254 700 123 456"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Company (Optional)
+                    </label>
+                    <input
+                      type="text"
+                      name="company"
+                      value={formData.company}
+                      onChange={handleInputChange}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="Your company name"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Category *
+                  </label>
+                  <select
+                    name="category"
+                    value={formData.category}
+                    onChange={handleInputChange}
+                    className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                      errors.category ? 'border-red-500' : 'border-gray-300'
+                    }`}
+                  >
+                    <option value="">Select a category</option>
+                    <option value="general">General Inquiry</option>
+                    <option value="entrepreneur">Entrepreneur Support</option>
+                    <option value="investor">Investor Relations</option>
+                    <option value="technical">Technical Support</option>
+                    <option value="partnership">Partnership Opportunities</option>
+                    <option value="press">Press & Media</option>
+                  </select>
+                  {errors.category && <p className="text-red-500 text-sm mt-1">{errors.category}</p>}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Subject *
+                  </label>
+                  <input
+                    type="text"
+                    name="subject"
+                    value={formData.subject}
+                    onChange={handleInputChange}
+                    className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                      errors.subject ? 'border-red-500' : 'border-gray-300'
+                    }`}
+                    placeholder="Brief subject of your message"
+                  />
+                  {errors.subject && <p className="text-red-500 text-sm mt-1">{errors.subject}</p>}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Message *
+                  </label>
+                  <textarea
+                    name="message"
+                    value={formData.message}
+                    onChange={handleInputChange}
+                    rows={5}
+                    className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                      errors.message ? 'border-red-500' : 'border-gray-300'
+                    }`}
+                    placeholder="Tell us how we can help you..."
+                  />
+                  {errors.message && <p className="text-red-500 text-sm mt-1">{errors.message}</p>}
+                  <p className="text-sm text-gray-500 mt-1">
+                    {formData.message.length} characters (minimum 10)
+                  </p>
+                </div>
+
                 <button
-                  onClick={handleGetStarted}
-                  className="bg-yellow-400 hover:bg-yellow-500 text-blue-900 font-bold py-4 px-8 rounded-lg text-lg transition-colors transform hover:scale-105"
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2"
                 >
-                  🚀 Get Started Today
+                  {isSubmitting ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      <span>📧</span>
+                      Send Message
+                    </>
+                  )}
                 </button>
-                <Link
-                  to="/projects"
-                  className="border-2 border-white text-white hover:bg-white hover:text-blue-900 font-semibold py-4 px-8 rounded-lg text-lg transition-colors text-center"
-                >
-                  💡 Explore Projects
-                </Link>
-              </div>
+              </form>
+            </div>
 
-              {/* Quick Stats */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {stats.map((stat, index) => (
-                  <div key={index} className="text-center">
-                    <div className="text-2xl mb-1">{stat.icon}</div>
-                    <div className="text-2xl font-bold">{stat.number}</div>
-                    <div className="text-blue-200 text-sm">{stat.label}</div>
+            {/* FAQ Section */}
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">Frequently Asked Questions</h2>
+              
+              <div className="space-y-4">
+                {faqItems.map((faq, index) => (
+                  <div key={index} className="bg-white rounded-lg shadow-md p-6">
+                    <h3 className="font-semibold text-gray-900 mb-3 flex items-start gap-2">
+                      <span className="text-blue-600 mt-1">❓</span>
+                      {faq.question}
+                    </h3>
+                    <p className="text-gray-600 leading-relaxed pl-6">
+                      {faq.answer}
+                    </p>
                   </div>
                 ))}
               </div>
-            </div>
 
-            <div className="relative">
-              <div className="bg-white bg-opacity-10 rounded-2xl p-8 backdrop-blur-sm">
-                <h3 className="text-2xl font-bold mb-6 text-center">Start Your Journey</h3>
-                
-                {isAuthenticated() ? (
-                  <div className="text-center">
-                    <div className="w-20 h-20 bg-yellow-400 rounded-full flex items-center justify-center text-4xl mx-auto mb-4">
-                      👋
-                    </div>
-                    <h4 className="text-xl font-semibold mb-2">Welcome back, {user.name}!</h4>
-                    <p className="text-blue-100 mb-6">Ready to continue your entrepreneurial journey?</p>
-                    <Link
-                      to="/dashboard"
-                      className="bg-yellow-400 hover:bg-yellow-500 text-blue-900 font-bold py-3 px-6 rounded-lg transition-colors inline-block"
-                    >
-                      Go to Dashboard
-                    </Link>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    <button
-                      onClick={() => {
-                        setAuthMode('register');
-                        setShowAuthModal(true);
-                      }}
-                      className="w-full bg-yellow-400 hover:bg-yellow-500 text-blue-900 font-bold py-3 px-6 rounded-lg transition-colors"
-                    >
-                      👩‍💼 Join as Entrepreneur
-                    </button>
-                    <button
-                      onClick={() => {
-                        setAuthMode('register');
-                        setShowAuthModal(true);
-                      }}
-                      className="w-full border-2 border-white text-white hover:bg-white hover:text-blue-900 font-semibold py-3 px-6 rounded-lg transition-colors"
-                    >
-                      💰 Join as Investor
-                    </button>
-                    
-                    <div className="text-center pt-4">
-                      <span className="text-blue-200">Already have an account? </span>
-                      <button
-                        onClick={() => {
-                          setAuthMode('login');
-                          setShowAuthModal(true);
-                        }}
-                        className="text-yellow-400 hover:text-yellow-300 font-semibold underline"
-                      >
-                        Sign In
-                      </button>
-                    </div>
-                  </div>
-                )}
+              <div className="mt-8 bg-blue-50 rounded-lg p-6">
+                <h3 className="font-semibold text-blue-900 mb-2 flex items-center gap-2">
+                  <span>💡</span>
+                  Still have questions?
+                </h3>
+                <p className="text-blue-700 mb-4">
+                  Can't find what you're looking for? Our support team is here to help!
+                </p>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <a
+                    href="mailto:info@womenconnecthub.com"
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors text-center"
+                  >
+                    📧 Email Support
+                  </a>
+                  <a
+                    href="tel:+254700123456"
+                    className="bg-white hover:bg-gray-50 text-blue-600 border border-blue-600 px-4 py-2 rounded-lg font-medium transition-colors text-center"
+                  >
+                    📞 Call Us
+                  </a>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </section>
+      </div>
 
-      {/* Search Section */}
-      <section className="py-16 bg-gray-50">
+      {/* Office Hours & Support */}
+      <div className="bg-white py-16">
         <div className="max-w-6xl mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Discover Amazing Projects
-            </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Search through hundreds of innovative projects from talented women entrepreneurs across Africa
-            </p>
-          </div>
-          
-          <SearchBar 
-            onSearch={handleSearch}
-            showFilters={true}
-            placeholder="Search projects, entrepreneurs, or categories..."
-            className="mb-8"
-          />
-
-          {searchResults && (
-            <div className="mt-8">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                Search Results ({searchResults.length} projects found)
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {searchResults.map(project => (
-                  <ProjectCard key={project.id} project={project} />
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* Featured Projects */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Featured Projects
-            </h2>
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              Discover innovative projects from our community of talented women entrepreneurs. 
-              These projects are making a real impact across Africa.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
-            {featuredProjects.map(project => (
-              <ProjectCard key={project.id} project={project} />
-            ))}
-          </div>
-
-          <div className="text-center">
-            <Link
-              to="/projects"
-              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors inline-flex items-center gap-2"
-            >
-              <span>🔍</span>
-              View All Projects
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* How It Works */}
-      <section className="py-16 bg-gradient-to-r from-purple-50 to-pink-50">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              How WomenConnect Hub Works
-            </h2>
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              From idea to funding - we've streamlined the process to help you succeed
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {features.map((feature, index) => (
-              <div key={index} className="bg-white rounded-xl shadow-md p-6 text-center hover:shadow-lg transition-shadow">
-                <div className="text-4xl mb-4">{feature.icon}</div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">{feature.title}</h3>
-                <p className="text-gray-600 leading-relaxed">{feature.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Success Stories */}
-      <section className="py-16 bg-white">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Success Stories
-            </h2>
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              Hear from women entrepreneurs who have transformed their ideas into thriving businesses through our platform
-            </p>
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">Our Support Hours</h2>
+            <p className="text-lg text-gray-600">We're here when you need us</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <div key={index} className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl p-6 shadow-md">
-                <div className="flex items-center mb-4">
-                  <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white text-xl mr-4">
-                    {testimonial.avatar}
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-gray-900">{testimonial.name}</h4>
-                    <p className="text-sm text-gray-600">{testimonial.role}</p>
-                    <p className="text-sm text-gray-500">{testimonial.location}</p>
-                  </div>
-                </div>
-                
-                <blockquote className="text-gray-700 italic mb-4">
-                  "{testimonial.text}"
-                </blockquote>
-                
-                <div className="border-t border-gray-200 pt-4">
-                  <p className="text-sm font-medium text-blue-600">
-                    Project: {testimonial.project}
-                  </p>
-                </div>
-              </div>
-            ))}
+            <div className="text-center">
+              <div className="text-4xl mb-4">🕐</div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Business Hours</h3>
+              <p className="text-gray-600">Monday - Friday</p>
+              <p className="text-gray-600">9:00 AM - 6:00 PM EAT</p>
+            </div>
+
+            <div className="text-center">
+              <div className="text-4xl mb-4">⚡</div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Response Time</h3>
+              <p className="text-gray-600">Email: Within 24 hours</p>
+              <p className="text-gray-600">Phone: Immediate</p>
+            </div>
+
+            <div className="text-center">
+              <div className="text-4xl mb-4">🌍</div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Time Zone</h3>
+              <p className="text-gray-600">East Africa Time (EAT)</p>
+              <p className="text-gray-600">UTC +3</p>
+            </div>
           </div>
         </div>
-      </section>
-
-      {/* Call to Action */}
-      <section className="py-16 bg-gradient-to-r from-amber-800 via-amber-700 to-amber-600 text-white">
-        <div className="max-w-4xl mx-auto px-4 text-center">
-          <h2 className="text-4xl font-bold mb-6">
-            Ready to Turn Your Vision Into Reality?
-          </h2>
-          <p className="text-xl text-amber-100 mb-8 leading-relaxed">
-            Join thousands of women entrepreneurs who are building the future of Africa. 
-            Start your project today and connect with investors who believe in your vision.
-          </p>
-          
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button
-              onClick={handleGetStarted}
-              className="bg-white text-amber-800 hover:bg-amber-50 font-bold py-4 px-8 rounded-lg text-lg transition-colors transform hover:scale-105"
-            >
-              🚀 Start Your Project
-            </button>
-            <Link
-              to="/about"
-              className="border-2 border-white text-white hover:bg-white hover:text-amber-800 font-semibold py-4 px-8 rounded-lg text-lg transition-colors"
-            >
-              📖 Learn More
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Auth Modal */}
-      {showAuthModal && (
-        <AuthModal
-          isOpen={showAuthModal}
-          onClose={() => setShowAuthModal(false)}
-          initialMode={authMode}
-        />
-      )}
+      </div>
 
       <Footer />
     </div>
   );
 };
 
-export default HomePage;
+export default ContactUs

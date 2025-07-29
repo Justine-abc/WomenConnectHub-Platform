@@ -1,91 +1,50 @@
 import React, { Suspense, useEffect, useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './components/auth/AuthProvider';
-import { NotificationProvider } from './contexts/NotificationContext';
-import ProtectedRoute from './components/auth/ProtectedRoute';
-import Header from './components/layout/Header';
-import Footer from './components/layout/Footer';
-import LoadingSpinner from './components/common/LoadingSpinner';
-import ErrorBoundary from './components/common/ErrorBoundary';
-import NotificationContainer from './components/common/NotificationContainer';
+import Header from './components/common/Header';
+import Footer from './components/common/Footer';
 import './App.css';
 
-// Lazy load components for better performance
-const Home = React.lazy(() => import('./pages/Home'));
-const About = React.lazy(() => import('./pages/About'));
-const Projects = React.lazy(() => import('./pages/Projects'));
-const ProjectDetails = React.lazy(() => import('./pages/ProjectDetails'));
-const Investors = React.lazy(() => import('./pages/Investors'));
-const Login = React.lazy(() => import('./pages/auth/Login'));
-const Register = React.lazy(() => import('./pages/auth/Register'));
-const Dashboard = React.lazy(() => import('./pages/Dashboard'));
-const Profile = React.lazy(() => import('./pages/Profile'));
-const Settings = React.lazy(() => import('./pages/Settings'));
+// Lazy load components for better performance - using your actual structure
+const HomePage = React.lazy(() => import('./components/pages/HomePage'));
+const ContactUs = React.lazy(() => import('./components/pages/ContactUs'));
+const ProjectDetails = React.lazy(() => import('./components/projects/ProjectDetails'));
+const AuthModal = React.lazy(() => import('./components/auth/AuthModal'));
+const EntrepreneurDashboard = React.lazy(() => import('./components/dashboard/EntrepreneurDashboard'));
+const ProjectUploadModal = React.lazy(() => import('./components/dashboard/ProjectUploadModal'));
+const InvestorPortal = React.lazy(() => import('./components/investors/InvestorPortal'));
 const MessagingCenter = React.lazy(() => import('./components/messaging/MessagingCenter'));
-const InvestmentTracking = React.lazy(() => import('./pages/InvestmentTracking'));
-const AdminDashboard = React.lazy(() => import('./pages/admin/AdminDashboard'));
-const UserManagement = React.lazy(() => import('./pages/admin/UserManagement'));
-const ProjectManagement = React.lazy(() => import('./pages/admin/ProjectManagement'));
-const Reports = React.lazy(() => import('./pages/admin/Reports'));
-const NotFound = React.lazy(() => import('./pages/NotFound'));
+const EmailModal = React.lazy(() => import('./components/messaging/EmailModal'));
+const ContactModal = React.lazy(() => import('./components/messaging/ContactModal'));
+const MessagingList = React.lazy(() => import('./components/messaging/MessagingList'));
+const ChatWindow = React.lazy(() => import('./components/messaging/ChatWindow'));
+const MessagingThread = React.lazy(() => import('./components/messaging/MessagingThread'));
+const EntrepreneurProfile = React.lazy(() => import('./components/profile/EntrepreneurProfile'));
+const InvestorProfile = React.lazy(() => import('./components/profile/InvestorProfile'));
+const ProfileForm = React.lazy(() => import('./components/profile/ProfileForm'));
+const AdminDashboard = React.lazy(() => import('./components/admin/AdminDashboard'));
+const AdminPanel = React.lazy(() => import('./components/admin/AdminPannel'));
 
-// Loading component for Suspense
+// Simple loading component
 const PageLoader = () => (
   <div className="min-h-screen flex items-center justify-center">
-    <LoadingSpinner size="lg" />
+    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
   </div>
 );
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
-  const [appError, setAppError] = useState(null);
+  
 
   useEffect(() => {
-    // Initialize app
-    const initializeApp = async () => {
-      try {
-        // Simulate app initialization
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        // Check for environment variables
-        if (!process.env.REACT_APP_API_URL) {
-          console.warn('⚠️ API URL not configured');
-        }
-        
-        console.log('✅ WomenConnect Hub Platform initialized successfully');
-        setIsLoading(false);
-      } catch (error) {
-        console.error('❌ App initialization failed:', error);
-        setAppError(error.message);
-        setIsLoading(false);
-      }
-    };
+    // Simple app initialization
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
 
-    initializeApp();
+    return () => clearTimeout(timer);
   }, []);
 
-  // Handle critical app errors
-  if (appError) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="max-w-md w-full text-center">
-          <div className="text-6xl mb-4">⚠️</div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">
-            Application Error
-          </h1>
-          <p className="text-gray-600 mb-4">
-            Something went wrong while loading the application.
-          </p>
-          <button
-            onClick={() => window.location.reload()}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
-          >
-            Reload Application
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   // Show loading screen during app initialization
   if (isLoading) {
@@ -103,99 +62,86 @@ function App() {
   }
 
   return (
-    <ErrorBoundary>
-      <AuthProvider>
-        <NotificationProvider>
-          <div className="App min-h-screen flex flex-col bg-gray-50">
-            <Header />
-            
-            <main className="flex-1">
-              <Suspense fallback={<PageLoader />}>
-                <Routes>
-                  {/* Public Routes */}
-                  <Route path="/" element={<Home />} />
-                  <Route path="/about" element={<About />} />
-                  <Route path="/projects" element={<Projects />} />
-                  <Route path="/projects/:id" element={<ProjectDetails />} />
-                  <Route path="/investors" element={<Investors />} />
-                  
-                  {/* Auth Routes */}
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/register" element={<Register />} />
-                  
-                  {/* Protected Routes */}
-                  <Route path="/dashboard" element={
-                    <ProtectedRoute>
-                      <Dashboard />
-                    </ProtectedRoute>
-                  } />
-                  
-                  <Route path="/profile" element={
-                    <ProtectedRoute>
-                      <Profile />
-                    </ProtectedRoute>
-                  } />
-                  
-                  <Route path="/settings" element={
-                    <ProtectedRoute>
-                      <Settings />
-                    </ProtectedRoute>
-                  } />
-                  
-                  <Route path="/messages" element={
-                    <ProtectedRoute>
-                      <MessagingCenter />
-                    </ProtectedRoute>
-                  } />
-                  
-                  <Route path="/investments" element={
-                    <ProtectedRoute>
-                      <InvestmentTracking />
-                    </ProtectedRoute>
-                  } />
-                  
-                  {/* Admin Routes */}
-                  <Route path="/admin" element={
-                    <ProtectedRoute requiredRole="admin">
-                      <AdminDashboard />
-                    </ProtectedRoute>
-                  } />
-                  
-                  <Route path="/admin/users" element={
-                    <ProtectedRoute requiredRole="admin">
-                      <UserManagement />
-                    </ProtectedRoute>
-                  } />
-                  
-                  <Route path="/admin/projects" element={
-                    <ProtectedRoute requiredRole="admin">
-                      <ProjectManagement />
-                    </ProtectedRoute>
-                  } />
-                  
-                  <Route path="/admin/reports" element={
-                    <ProtectedRoute requiredRole="admin">
-                      <Reports />
-                    </ProtectedRoute>
-                  } />
-                  
-                  {/* Redirect old routes */}
-                  <Route path="/entrepreneur-dashboard" element={<Navigate to="/dashboard" replace />} />
-                  <Route path="/investor-dashboard" element={<Navigate to="/dashboard" replace />} />
-                  <Route path="/admin-dashboard" element={<Navigate to="/admin" replace />} />
-                  
-                  {/* 404 Route */}
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </Suspense>
-            </main>
-            
-            <Footer />
-            <NotificationContainer />
-          </div>
-        </NotificationProvider>
-      </AuthProvider>
-    </ErrorBoundary>
+    <AuthProvider>
+      <div className="App min-h-screen flex flex-col bg-gray-50">
+        <Header />
+        
+        <main className="flex-1">
+          <Suspense fallback={<PageLoader />}>
+            <Routes>
+              {/* Main Pages */}
+              <Route path="/" element={<HomePage />} />
+              <Route path="/contact" element={<ContactUs />} />
+              
+              {/* Auth Routes */}
+              <Route path="/auth" element={<AuthModal />} />
+              <Route path="/login" element={<AuthModal />} />
+              <Route path="/register" element={<AuthModal />} />
+              
+              {/* Project Routes */}
+              <Route path="/project/:id" element={<ProjectDetails />} />
+              <Route path="/upload-project" element={<ProjectUploadModal />} />
+              
+              {/* Dashboard Routes */}
+              <Route path="/entrepreneur-dashboard" element={<EntrepreneurDashboard />} />
+              <Route path="/dashboard" element={<Navigate to="/entrepreneur-dashboard" replace />} />
+              
+              {/* Investor Routes */}
+              <Route path="/investor-portal" element={<InvestorPortal />} />
+              <Route path="/investors" element={<InvestorPortal />} />
+              
+              {/* Profile Routes */}
+              <Route path="/entrepreneur-profile" element={<EntrepreneurProfile />} />
+              <Route path="/investor-profile" element={<InvestorProfile />} />
+              <Route path="/profile" element={<ProfileForm />} />
+              <Route path="/edit-profile" element={<ProfileForm />} />
+              
+              {/* Messaging Routes */}
+              <Route path="/messages" element={<MessagingCenter />} />
+              <Route path="/messaging" element={<MessagingList />} />
+              <Route path="/chat/:id" element={<ChatWindow />} />
+              <Route path="/thread/:id" element={<MessagingThread />} />
+              <Route path="/email" element={<EmailModal />} />
+              <Route path="/contact-modal" element={<ContactModal />} />
+              
+              {/* Admin Routes */}
+              <Route path="/admin" element={<AdminDashboard />} />
+              <Route path="/admin-dashboard" element={<AdminDashboard />} />
+              <Route path="/admin-panel" element={<AdminPanel />} />
+              
+              {/* Redirect old routes */}
+              <Route path="/home" element={<Navigate to="/" replace />} />
+              <Route path="/contact-us" element={<Navigate to="/contact" replace />} />
+              
+              {/* 404 Route */}
+              <Route path="*" element={
+                <div className="min-h-screen flex items-center justify-center bg-gray-50">
+                  <div className="text-center">
+                    <h1 className="text-6xl font-bold text-gray-300 mb-4">404</h1>
+                    <h2 className="text-2xl font-semibold text-gray-600 mb-4">Page Not Found</h2>
+                    <p className="text-gray-500 mb-8">The page you're looking for doesn't exist.</p>
+                    <button
+                      onClick={() => window.history.back()}
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors mr-4"
+                    >
+                      Go Back
+                    </button>
+                    <button
+                      onClick={() => window.location.href = '/'}
+                      className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg transition-colors"
+                    >
+                      Go Home
+                    </button>
+                  </div>
+                </div>
+              } />
+            </Routes>
+          </Suspense>
+        </main>
+        
+        <Footer />
+      </div>
+    </AuthProvider>
   );
 }
 
