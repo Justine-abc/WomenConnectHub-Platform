@@ -1,0 +1,403 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  padding: 20px;
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* WomenConnect Hub Specific Styles */
+.women-connect-hub {
+  font-family: 'Inter', sans-serif;
+}
+
+/* Hero Section Animations */
+.hero-text {
+  animation: fadeInUp 1s ease-out;
+}
+
+.hero-image {
+  animation: fadeInRight 1s ease-out 0.3s both;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Feature Cards */
+.feature-card {
+  transition: all 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Success Stories */
+.success-story {
+  position: relative;
+  overflow: hidden;
+}
+
+.success-story::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, rgba(59, 130, 246, 0.1), rgba(236, 72, 153, 0.1));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.success-story:hover::before {
+  opacity: 1;
+}
+
+/* Statistics Counter */
+.stat-counter {
+  font-weight: 700;
+  font-size: 2.5rem;
+  background: linear-gradient(135deg, #3b82f6, #ec4899);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Investment Progress */
+.investment-progress {
+  background: linear-gradient(90deg, #e5e7eb 0%, #e5e7eb 100%);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.investment-progress-fill {
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Profile Upload */
+.profile-upload {
+  position: relative;
+  display: inline-block;
+}
+
+.profile-upload-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  border-radius: 50%;
+}
+
+.profile-upload:hover .profile-upload-overlay {
+  opacity: 1;
+}
+
+/* Message Status */
+.message-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.message-status.read {
+  color: #3b82f6;
+}
+
+/* Typing Indicator */
+.typing-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.5rem 0.75rem;
+  background: #f3f4f6;
+  border-radius: 1rem;
+  max-width: fit-content;
+}
+
+.typing-dot {
+  width: 6px;
+  height: 6px;
+  background: #6b7280;
+  border-radius: 50%;
+  animation: typingDot 1.4s infinite ease-in-out;
+}
+
+.typing-dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing-dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes typingDot {
+  0%, 60%, 100% {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+  30% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Search Highlight */
+.search-highlight {
+  background: linear-gradient(120deg, #fbbf24 0%, #f59e0b 100%);
+  color: #92400e;
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
+  font-weight: 600;
+}
+
+/* Priority Indicators */
+.priority-urgent {
+  color: #dc2626;
+  animation: pulse 1s infinite;
+}
+
+.priority-high {
+  color: #ea580c;
+}
+
+.priority-normal {
+  color: #059669;
+}
+
+.priority-low {
+  color: #6b7280;
+}
+
+/* Online Status */
+.online-status {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 12px;
+  height: 12px;
+  background: #10b981;
+  border: 2px solid white;
+  border-radius: 50%;
+}
+
+.online-status.offline {
+  background: #6b7280;
+}
+
+.online-status.away {
+  background: #f59e0b;
+}
+
+.online-status.busy {
+  background: #dc2626;
+}
+
+/* Notification Bell */
+.notification-bell {
+  position: relative;
+}
+
+.notification-badge {
+  position: absolute;
+  top: -0.25rem;
+  right: -0.25rem;
+  background: #dc2626;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: pulse 2s infinite;
+}
+
+/* Project Category Tags */
+.category-tech {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+}
+
+.category-fashion {
+  background: linear-gradient(135deg, #ec4899, #be185d);
+}
+
+.category-beauty {
+  background: linear-gradient(135deg, #f472b6, #db2777);
+}
+
+.category-food {
+  background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.category-agriculture {
+  background: linear-gradient(135deg, #84cc16, #65a30d);
+}
+
+.category-arts {
+  background: linear-gradient(135deg, #a855f7, #7c3aed);
+}
+
+/* Investment Risk Levels */
+.risk-low {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+}
+
+.risk-medium {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+}
+
+.risk-high {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  color: white;
+}
+
+/* Loading Skeleton */
+.skeleton {
+  background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Toast Notifications */
+.toast-enter {
+  transform: translateX(100%);
+  opacity: 0;
+}
+
+.toast-enter-active {
+  transform: translateX(0);
+  opacity: 1;
+  transition: all 0.3s ease-out;
+}
+
+.toast-exit {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.toast-exit-active {
+  transform: translateX(100%);
+  opacity: 0;
+  transition: all 0.3s ease-in;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .stat-counter {
+    font-size: 1.875rem;
+  }
+  
+  .hero-text {
+    animation-delay: 0.2s;
+  }
+  
+  .hero-image {
+    animation-delay: 0.5s;
+  }
+}
+
+/* Dark mode enhancements */
+@media (prefers-color-scheme: dark) {
+  .search-highlight {
+    background: linear-gradient(120deg, #92400e 0%, #78350f 100%);
+    color: #fbbf24;
+  }
+  
+  .typing-indicator {
+    background: #374151;
+  }
+  
+  .typing-dot {
+    background: #9ca3af;
+  }
+  
+  .skeleton {
+    background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%);
+    background-size: 200% 100%;
+  }
+}
+
+/* Print optimizations */
+@media print {
+  .hero-section,
+  .feature-card,
+  .success-story {
+    animation: none !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  
+  .stat-counter {
+    -webkit-print-color-adjust: exact;
+    color-adjust: exact;
+  }
+}
