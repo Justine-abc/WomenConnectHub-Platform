@@ -1,0 +1,80 @@
+backend/
+├── config/
+│   │   ├── database.js                 
+│   │   ├── oauth.js                 
+│   │   ├── swagger.js              
+│   │   ├── clouding.js             
+│   │                   
+│   │              
+│   ├── controllers/
+│   │   ├── adminController.js              
+│   │   ├── authController.js   
+|   |   ├── entrepreneurController.js
+│   │   ├── investorController.js
+│   │   ├── projectController.js
+│   │   ├── userController.js     
+│   │    
+│   │
+│   ├── doc/
+│   │   ├── swagger.json        # API documentation   
+│   │
+│   ├── middleware/
+│   │   ├── auth.js        
+│   │   ├── rateLimiter.js      
+│   │   ├── upload.js    
+│   │   ├── validation.js
+│   │ 
+│   ├── models/
+│   │   ├── Conversation.js         
+│   │   ├── EntrepreneurProfile.js       
+│   │   ├── Interaction.js   
+│   │   ├── InvestorProfile.js  
+│   │   ├── Message.js
+│   │   ├── Project.js
+│   │   ├── User.js
+│   │   ├── associations.js
+│   │   ├── index.js
+│   │   ├── upload.js
+│   │       
+│   │
+│   └── routes/                           
+|   |   ├── admin.js  
+|   |   ├── auth.js 
+|   |   ├── entrepreneur.js
+|   |   ├── investor.js
+|   |   ├── messages.js
+|   |   ├── email.js
+|   |   ├── users.js
+|   |   ├── profiles.js
+|   |   ├── projects.js
+|   |           
+|   |
+│   |__services/
+│   |  |__analyticsService.js
+|   |  |__cloudinaryService.js
+|   |  |__gemailService.js
+|   |  |__notificationService.js
+|   |
+|   | 
+|   |__ socket/
+|   |   |__socketHandlers.js
+|   |   
+|   |__utils/
+|      |__constants.js
+|      |__helpers.js
+|      |__validators.js
+│
+└── .gitignore
+|
+|
+├── app.js
+|
+│__ package-lock.json
+|
+|__ package.json
+|
+|__schema.sql
+|
+|__server.js
+|
+│__ .env
