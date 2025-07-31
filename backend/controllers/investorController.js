@@ -1,39 +1,40 @@
-
-const EntrepreneurProfile = require("../models/EntrepreneurProfile");
-
+const InvestorProfile = require("../models/InvestorProfile");
 
 
-const listEntrepreneurs = async (req, res) => {
+// List all investors
+
+const listInvestors = async (req, res) => {
   try {
-    const entrepreneurs = await EntrepreneurProfile.findAll();
-    res.status(200).json(entrepreneurs);
+    const investors = await InvestorProfile.findAll();
+    res.status(200).json(investors);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
-
-// Define all functions first
-const createEntrepreneurProfile = async (req, res) => {
+// Create a new investor profile
+const createInvestorProfile = async (req, res) => {
   try {
-    const profile = await EntrepreneurProfile.create({ ...req.body, userId: req.user.id });
+    const profile = await InvestorProfile.create({ ...req.body, userId: req.user.id });
     res.status(201).json(profile);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
-const getEntrepreneurProjects = async (req, res) => {
+// Get all investor profiles
+const getAllInvestorProfiles = async (req, res) => {
   try {
-    const projects = await EntrepreneurProfile.findAll({ where: { userId: req.user.id } });
-    res.status(200).json(projects);
+    const profiles = await InvestorProfile.findAll();
+    res.status(200).json(profiles);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
+// Get the current user's investor profile
 const getProfile = async (req, res) => {
   try {
-    const profile = await EntrepreneurProfile.findOne({ where: { userId: req.user.id } });
+    const profile = await InvestorProfile.findOne({ where: { userId: req.user.id } });
     if (!profile) {
       return res.status(404).json({ error: "Profile not found" });
     }
@@ -43,9 +44,10 @@ const getProfile = async (req, res) => {
   }
 };
 
+// Update the current user's investor profile
 const updateProfile = async (req, res) => {
   try {
-    const profile = await EntrepreneurProfile.findOne({ where: { userId: req.user.id } });
+    const profile = await InvestorProfile.findOne({ where: { userId: req.user.id } });
     if (!profile) {
       return res.status(404).json({ error: "Profile not found" });
     }
@@ -56,11 +58,10 @@ const updateProfile = async (req, res) => {
   }
 };
 
-// Export all functions
 module.exports = {
-    listEntrepreneurs,
-  createEntrepreneurProfile,
-  getEntrepreneurProjects,
+  listInvestors,
+  createInvestorProfile,
+  getAllInvestorProfiles,
   getProfile,
   updateProfile
 };

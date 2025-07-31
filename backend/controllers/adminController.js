@@ -1,5 +1,5 @@
 // controllers/adminController.js
-const { getPlatformStats } = require("../services/analyticsService");
+const { getPlatformStats } = require("../services/analyticsServices");
 
 const getDashboardStats = async (req, res) => {
   try {

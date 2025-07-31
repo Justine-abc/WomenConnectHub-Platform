@@ -1,25 +1,35 @@
-// controllers/userController.js
+// filepath: backend/controllers/userController.js
 const User = require("../models/User");
 
-const getUserProfile = async (req, res) => {
+// Get current user info
+const getUser = async (req, res) => {
   try {
     const user = await User.findByPk(req.user.id);
-    if (!user) return res.status(404).json({ error: "User not found" });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
     res.status(200).json(user);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
-const updateUserProfile = async (req, res) => {
+// Update current user info
+const updateUser = async (req, res) => {
   try {
-    const [updated] = await User.update(req.body, { where: { id: req.user.id } });
-    if (!updated) return res.status(404).json({ error: "Update failed" });
+    
     const user = await User.findByPk(req.user.id);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    await user.update(req.body);
     res.status(200).json(user);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
-module.exports = { getUserProfile, updateUserProfile };
+module.exports = {
+  getUser,
+  updateUser
+};
