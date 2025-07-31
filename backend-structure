@@ -12,7 +12,10 @@ backend/
 |   |   ├── entrepreneurController.js
 │   │   ├── investorController.js
 │   │   ├── projectController.js
-│   │   ├── userController.js     
+│   │   ├── userController.js  
+│   │   ├── messageController.js
+│   │   ├── emailController.js
+│   │   ├── profileController.js   
 │   │    
 │   │
 │   ├── doc/
