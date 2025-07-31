@@ -1,12 +1,14 @@
-// controllers/messageController.js
+// filepath: backend/controllers/messageController.js
 const Message = require("../models/Message");
 
+// Send a message
 const sendMessage = async (req, res) => {
   try {
+    const { receiverId, text } = req.body;
     const message = await Message.create({
       senderId: req.user.id,
-      receiverId: req.body.receiverId,
-      content: req.body.content,
+      receiverId,
+      text
     });
     res.status(201).json(message);
   } catch (error) {
@@ -14,15 +16,11 @@ const sendMessage = async (req, res) => {
   }
 };
 
-const getMessages = async (req, res) => {
+// Get inbox messages for the current user
+const getInbox = async (req, res) => {
   try {
     const messages = await Message.findAll({
-      where: {
-        [Op.or]: [
-          { senderId: req.user.id },
-          { receiverId: req.user.id },
-        ],
-      },
+      where: { receiverId: req.user.id }
     });
     res.status(200).json(messages);
   } catch (error) {
@@ -30,4 +28,7 @@ const getMessages = async (req, res) => {
   }
 };
 
-module.exports = { sendMessage, getMessages };
+module.exports = {
+  sendMessage,
+  getInbox
+};

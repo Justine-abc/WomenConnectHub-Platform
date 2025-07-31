@@ -63,10 +63,10 @@ app.use("/api/projects", projectRoutes);
 app.get("/api/health", (req, res) => res.send("WomenConnectHub API is running."));
 
 // Server and DB Init
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 (async () => {
-  try {
-    await sequelize.authenticate();
+ try {
+  await sequelize.authenticate();
     console.log("Database connected");
     await sequelize.sync();
     server.listen(PORT, () => console.log(`Server listening on port ${PORT}`));

@@ -10,7 +10,7 @@ const options = {
       version: "1.0.0",
       description: "API documentation for the WomenConnect platform",
     },
-    servers: [{ url: "http://localhost:3000/api" }],
+    servers: [{ url: "http://localhost:5001/api" }],
   },
   apis: ["./routes/*.js"],
 };

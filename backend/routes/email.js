@@ -1,8 +1,8 @@
-// routes/email.js
+// backend/routes/email.js
 const express = require("express");
 const router = express.Router();
-const gemailService = require("../services/gemailService");
+const emailController = require("../controllers/emailController");
 
-router.post("/send", gemailService.sendEmail);
+router.post("/send", emailController.sendEmail);
 
 module.exports = router;
