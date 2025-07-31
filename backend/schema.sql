@@ -1,0 +1,43 @@
+// schema.sql
+CREATE TABLE Users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  firstName VARCHAR(50),
+  lastName VARCHAR(50),
+  email VARCHAR(100) UNIQUE NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  role ENUM('entrepreneur', 'investor', 'admin') DEFAULT 'entrepreneur',
+  country VARCHAR(100),
+  city VARCHAR(100),
+  businessCertificate VARCHAR(255),
+  profileImage VARCHAR(255),
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE Projects (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  userId INT,
+  title VARCHAR(100),
+  description TEXT,
+  imageUrl VARCHAR(255),
+  location VARCHAR(255),
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (userId) REFERENCES Users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE Messages (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  senderId INT,
+  receiverId INT,
+  text TEXT,
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (senderId) REFERENCES Users(id),
+  FOREIGN KEY (receiverId) REFERENCES Users(id)
+);
+
+CREATE TABLE Conversations (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  participants VARCHAR(255),
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
