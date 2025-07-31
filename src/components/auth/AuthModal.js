@@ -1,42 +1,36 @@
 import React, { useState } from 'react';
 import { useAuth } from './AuthProvider';
 
+const ADMIN_SECRET_KEY = "12345@#@@@@@@@@!!!!wwwgggh.";
+
+const initialFormData = {
+  email: '',
+  password: '',
+  confirmPassword: '',
+  firstName: '',
+  lastName: '',
+  gender: 'female',
+  country: '',
+  city: '',
+  profileImage: '',
+  businessCertificate: '',
+  companyName: '',
+  contactInfo: '',
+  companyWebsite: '',
+  secretKey: ''
+};
+
 const AuthModal = () => {
   const { login, register } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
   const [userType, setUserType] = useState('entrepreneur');
-  const [formData, setFormData] = useState({
-    // Common fields
-    email: '',
-    password: '',
-    confirmPassword: '',
-    
-    // Entrepreneur fields
-    firstName: '',
-    lastName: '',
-    gender: 'female',
-    country: '',
-    city: '',
-    profileImage: '',
-    businessCertificate: '',
-    
-    // Investor fields
-    companyName: '',
-    contactInfo: '',
-    companyWebsite: '',
-    
-    // Admin fields
-    secretKey: ''
-  });
+  const [formData, setFormData] = useState(initialFormData);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
-
-  const ADMIN_SECRET_KEY = "12345@#@@@@@@@@!!!!wwwgggh.";
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    // Clear error when user starts typing
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
@@ -84,14 +78,12 @@ const AuthModal = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
     if (!validateForm()) return;
-    
     setLoading(true);
 
     try {
       if (isLogin) {
-        await login(formData.email, formData.password);
+        await login({ email: formData.email, password: formData.password });
       } else {
         const registrationData = {
           ...formData,
@@ -101,7 +93,6 @@ const AuthModal = () => {
         await register(registrationData);
       }
     } catch (error) {
-      console.error('Auth error:', error);
       setErrors({ general: error.message || 'An error occurred' });
     } finally {
       setLoading(false);
@@ -109,22 +100,7 @@ const AuthModal = () => {
   };
 
   const resetForm = () => {
-    setFormData({
-      email: '',
-      password: '',
-      confirmPassword: '',
-      firstName: '',
-      lastName: '',
-      gender: 'female',
-      country: '',
-      city: '',
-      profileImage: '',
-      businessCertificate: '',
-      companyName: '',
-      contactInfo: '',
-      companyWebsite: '',
-      secretKey: ''
-    });
+    setFormData(initialFormData);
     setErrors({});
   };
 
@@ -143,6 +119,7 @@ const AuthModal = () => {
           <p className="mt-2 text-center text-sm text-gray-600">
             {isLogin ? "Don't have an account? " : "Already have an account? "}
             <button
+              type="button"
               onClick={() => {
                 setIsLogin(!isLogin);
                 resetForm();
@@ -396,7 +373,6 @@ const AuthModal = () => {
                   />
                   {errors.city && <p className="mt-1 text-sm text-red-600">{errors.city}</p>}
                 </div>
-                
               </div>
             )}
 
