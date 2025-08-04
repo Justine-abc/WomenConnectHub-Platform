@@ -1,8 +1,8 @@
 // app.js
 require("dotenv").config();
 const express = require("express");
-const http = require("http");
 const { Server } = require("socket.io");
+const http = require("http");
 const cors = require("cors");
 const morgan = require("morgan");
 const helmet = require("helmet");
@@ -26,15 +26,6 @@ const profileRoutes = require("./routes/profiles");
 const projectRoutes = require("./routes/projects");
 
 const app = express();
-const server = http.createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: "*",
-    methods: ["GET", "POST"]
-  }
-});
-
-socketHandlers(io);
 
 // Middlewares
 app.use(cors());
@@ -62,15 +53,17 @@ app.use("/api/projects", projectRoutes);
 // Health Check
 app.get("/api/health", (req, res) => res.send("WomenConnectHub API is running."));
 
-// Server and DB Init
-const PORT =  9000;
-(async () => {
- try {
-  await sequelize.authenticate();
-    console.log("Database connected");
-    await sequelize.sync();
-    server.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
-  } catch (err) {
-    console.error("Unable to connect to the database:", err);
-  }
-})();
+// Export the app
+module.exports = app;
+
+// Export a function to initialize socket.io (optional, to be called by server.js)
+module.exports.initSocket = (server) => {
+  const io = new Server(server, {
+    cors: {
+      origin: "*",
+      methods: ["GET", "POST"],
+    },
+  });
+  socketHandlers(io);
+  return io;
+};

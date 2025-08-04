@@ -135,14 +135,14 @@ const Footer = () => {
 
               <h5 className="font-semibold mb-4">Follow Us</h5>
               <div className="space-y-2">
-                <a href="#" className="flex items-center gap-3 text-white text-opacity-80 hover:text-white transition-colors hover:translate-x-1 transform">
+                <button className="flex items-center gap-3 text-white text-opacity-80 hover:text-white transition-colors hover:translate-x-1 transform">
                   <span>💼</span>
                   <span>LinkedIn</span>
-                </a>
-                <a href="#" className="flex items-center gap-3 text-white text-opacity-80 hover:text-white transition-colors hover:translate-x-1 transform">
+                </button>
+                <button className="flex items-center gap-3 text-white text-opacity-80 hover:text-white transition-colors hover:translate-x-1 transform">
                   <span>📺</span>
                   <span>YouTube</span>
-                </a>
+                </button>
               </div>
 
               <div className="mt-8">

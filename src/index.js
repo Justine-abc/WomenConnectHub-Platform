@@ -60,7 +60,7 @@ if (process.env.NODE_ENV === 'development') {
   window.debugApp = {
     version: process.env.REACT_APP_VERSION || '1.0.0',
     environment: process.env.NODE_ENV,
-    apiUrl: process.env.REACT_APP_API_URL,
+    apiUrl: process.env.REACT_APP_API_BASE_URL,
     enableAnalytics: process.env.REACT_APP_ENABLE_ANALYTICS === 'true'
   };
 }

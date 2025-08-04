@@ -11,18 +11,15 @@ const InvestorProfile = () => {
   const [activeTab, setActiveTab] = useState('overview');
 
   useEffect(() => {
-    loadProfileData();
-  }, []);
-
-  const loadProfileData = async () => {
-    setLoading(true);
-    
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // Mock profile data
-    const mockProfile = {
-      id: user?.id || 1,
+    const loadProfileData = async () => {
+      setLoading(true);
+      
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Mock profile data
+      const mockProfile = {
+        id: user?.id || 1,
       name: user?.name || "John Investment",
       email: user?.email || "john.investor@example.com",
       companyName: user?.profile?.companyName || "Investment Partners Ltd",
@@ -100,7 +97,10 @@ const InvestorProfile = () => {
     setPortfolio(mockPortfolio);
     setInvestments(mockInvestments);
     setLoading(false);
-  };
+    };
+
+    loadProfileData();
+  }, []);
 
   const tabs = [
     { id: 'overview', label: 'Overview', icon: '👤' },

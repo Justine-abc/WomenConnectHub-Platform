@@ -6,7 +6,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 const register = async (req, res) => {
-  const { name, email, password, role } = req.body;
+  const { firstName, lastName, email, password, role, country, city } = req.body;
   try {
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
@@ -14,13 +14,16 @@ const register = async (req, res) => {
     }
     const hashedPassword = bcrypt.hashSync(password, 10);
     const user = await User.create({
-      name,
+      firstName,
+      lastName,
       email,
       password: hashedPassword,
       role: role || "entrepreneur",
+      country,
+      city,
     });
     const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET);
-    res.status(201).json({ token, user });
+    res.status(201).json({ token, user: { id: user.id, firstName: user.firstName, lastName: user.lastName, email: user.email, role: user.role } });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
