@@ -76,40 +76,54 @@ export const AuthProvider = ({ children }) => {
       setLoading(true);
       setError(null);
 
-      // Simulate API login call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      // Mock successful login response
-      const mockUser = {
-        id: 1,
-        email: credentials.email,
-        name: credentials.email === 'entrepreneur@test.com' ? 'Jane Entrepreneur' : 'John Investor',
-        type: credentials.email === 'entrepreneur@test.com' ? 'entrepreneur' : 'investor',
-        firstName: credentials.email === 'entrepreneur@test.com' ? 'Jane' : 'John',
-        lastName: credentials.email === 'entrepreneur@test.com' ? 'Entrepreneur' : 'Investor',
-        profile: {
-          country: 'Kenya',
-          city: 'Nairobi',
-          profileImage: '',
-          businessCertificate: credentials.email === 'entrepreneur@test.com' ? 'certificate-url' : null,
-          companyName: credentials.email !== 'entrepreneur@test.com' ? 'Investment Corp' : null,
-          website: credentials.email !== 'entrepreneur@test.com' ? 'https://investmentcorp.com' : null
+      // Make actual API call to backend
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-        createdAt: new Date().toISOString(),
+        body: JSON.stringify({
+          email: credentials.email,
+          password: credentials.password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Login failed');
+      }
+
+      // Extract user data from response
+      const { token, user: userData } = data;
+      
+      const user = {
+        id: userData.id,
+        email: userData.email,
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        name: `${userData.firstName} ${userData.lastName}`.trim(),
+        type: userData.role,
+        profile: {
+          country: userData.country || '',
+          city: userData.city || '',
+          profileImage: userData.profileImage || '',
+          businessCertificate: userData.businessCertificate || null,
+        },
+        createdAt: userData.createdAt,
         lastLogin: new Date().toISOString()
       };
 
-      const mockToken = `mock-jwt-token-${Date.now()}`;
-
       // Save to localStorage
-      localStorage.setItem('wch_user', JSON.stringify(mockUser));
-      localStorage.setItem('wch_token', mockToken);
+      localStorage.setItem('wch_user', JSON.stringify(user));
+      localStorage.setItem('wch_token', token);
 
-      setUser(mockUser);
-      return mockUser;
+      setUser(user);
+      return user;
 
     } catch (err) {
-      const errorMessage = 'Invalid email or password. Please try again.';
+      console.error('Login error:', err);
+      const errorMessage = err.message || 'Invalid email or password. Please try again.';
       setError(errorMessage);
       throw new Error(errorMessage);
     } finally {
@@ -127,7 +141,7 @@ export const AuthProvider = ({ children }) => {
         throw new Error('Email and password are required');
       }
 
-      // Admin secret key validation
+      // Admin secret key validation (keep for frontend validation)
       if (userData.userType === 'admin') {
         const ADMIN_SECRET_KEY = '12345@#@@@@@@@@!!!!wwwgggh.';
         if (!userData.secretKey || userData.secretKey !== ADMIN_SECRET_KEY) {
@@ -139,51 +153,40 @@ export const AuthProvider = ({ children }) => {
         throw new Error('Only female entrepreneurs can register');
       }
 
-      // Simulate API registration call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-
-      // Check if email already exists (simulate)
-      if (userData.email === 'existing@test.com') {
-        throw new Error('An account with this email already exists');
-      }
-
-      // Create new user object
-      const newUser = {
-        id: Date.now(),
-        email: userData.email,
-        type: userData.userType,
+      // Prepare data for backend API
+      const registrationData = {
         firstName: userData.firstName || userData.companyName,
         lastName: userData.lastName || '',
-        name: userData.userType === 'entrepreneur'
-          ? `${userData.firstName} ${userData.lastName}`.trim()
-          : userData.userType === 'admin'
-            ? `${userData.firstName} ${userData.lastName}`.trim()
-            : userData.companyName,
-        profile: {
-          country: userData.country,
-          city: userData.city,
-          profileImage: userData.profileImage || '',
-          businessCertificate: userData.businessCertificate || null,
-          companyName: userData.companyName || null,
-          website: userData.companyWebsite || null,
-          contactInfo: userData.contactInfo || null,
-          gender: userData.gender
-        },
-        createdAt: new Date().toISOString(),
-        lastLogin: new Date().toISOString()
+        email: userData.email,
+        password: userData.password,
+        role: userData.userType || 'entrepreneur',
+        country: userData.country,
+        city: userData.city,
+        gender: userData.gender,
+        companyName: userData.companyName,
+        companyWebsite: userData.companyWebsite,
+        contactInfo: userData.contactInfo
       };
 
-      const mockToken = `mock-jwt-token-${Date.now()}`;
+      // Call real backend API
+      const response = await api.post('/auth/register', registrationData);
 
-      // Save to localStorage
-      localStorage.setItem('wch_user', JSON.stringify(newUser));
-      localStorage.setItem('wch_token', mockToken);
+      if (response.data.success) {
+        const { user, token } = response.data;
+        
+        // Save to localStorage
+        localStorage.setItem('wch_user', JSON.stringify(user));
+        localStorage.setItem('wch_token', token);
 
-      setUser(newUser);
-      return newUser;
+        setUser(user);
+        return user;
+      } else {
+        throw new Error(response.data.message || 'Registration failed');
+      }
 
     } catch (err) {
-      const errorMessage = err.message || 'Registration failed. Please try again.';
+      console.error('Registration error:', err);
+      const errorMessage = err.response?.data?.message || err.message || 'Registration failed. Please try again.';
       setError(errorMessage);
       throw new Error(errorMessage);
     } finally {
