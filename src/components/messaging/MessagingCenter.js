@@ -16,15 +16,18 @@ const MessagingCenter = () => {
   const [contactRecipient, setContactRecipient] = useState(null);
 
   useEffect(() => {
-    const loadMessages = async () => {
-      setLoading(true);
-      await new Promise(resolve => setTimeout(resolve, 1000));
+    loadMessages();
+  }, [activeTab]);
 
-      // Mock data
-      const mockMessages = [
-        {
-          id: 1,
-          threadId: 'thread_1',
+  const loadMessages = async () => {
+    setLoading(true);
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    // Mock data
+    const mockMessages = [
+      {
+        id: 1,
+        threadId: 'thread_1',
         from: {
           id: 2,
           name: 'Sarah Wanjiku',
@@ -134,10 +137,7 @@ const MessagingCenter = () => {
     setMessages(mockMessages);
     setThreads(Object.values(threadMap));
     setLoading(false);
-    };
-
-    loadMessages();
-  }, [activeTab]);
+  };
 
   const handleThreadSelect = (thread) => {
     setSelectedThread(thread);

@@ -262,7 +262,7 @@ export const BREAKPOINTS = {
   '2XL': '1536px',
 };
 
-const constants = {
+export default {
   USER_TYPES,
   PROJECT_CATEGORIES,
   COUNTRIES,
@@ -287,5 +287,3 @@ const constants = {
   ANIMATION,
   BREAKPOINTS,
 };
-
-export default constants;

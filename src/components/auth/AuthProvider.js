@@ -16,58 +16,60 @@ export const AuthProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const [isInitialized, setIsInitialized] = useState(false);
 
-  // Initialize auth state on app start
-  const initializeAuth = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
+  // Initialize auth state from localStorage on app start
+  const initializeAuth = useCallback(() => {
+    setLoading(true);
+    const savedUser = localStorage.getItem('wch_user');
+    const savedToken = localStorage.getItem('wch_token');
 
-      // Check for existing session in localStorage
-      const savedUser = localStorage.getItem('wch_user');
-      const savedToken = localStorage.getItem('wch_token');
-
-      if (savedUser && savedToken) {
-        try {
-          const userData = JSON.parse(savedUser);
-
-          // Validate token with backend (simulate for now)
-          const isValidToken = await validateToken(savedToken);
-
-          if (isValidToken) {
-            setUser(userData);
-          } else {
-            // Token is invalid, clear storage
-            clearAuthData();
-          }
-        } catch (err) {
-          console.error('Error parsing saved user data:', err);
-          clearAuthData();
-        }
+    if (savedUser && savedToken) {
+      try {
+        setUser(JSON.parse(savedUser));
+      } catch {
+        // Clear corrupt data
+        localStorage.removeItem('wch_user');
+        localStorage.removeItem('wch_token');
+        setUser(null);
       }
-    } catch (err) {
-      console.error('Auth initialization error:', err);
-      setError('Failed to initialize authentication');
-    } finally {
-      setLoading(false);
-      setIsInitialized(true);
     }
+    setLoading(false);
+    setIsInitialized(true);
   }, []);
 
   useEffect(() => {
     initializeAuth();
   }, [initializeAuth]);
 
-  const validateToken = async (token) => {
+  const register = async (userData) => {
     try {
-      // Simulate API call to validate token
-      // In real app, this would call your backend
-      await new Promise(resolve => setTimeout(resolve, 500));
+      setLoading(true);
+      setError(null);
 
-      // For demo purposes, consider token valid if it exists
-      return !!token;
+      if (!userData.email || !userData.password || !userData.name) {
+        throw new Error('Name, email, and password are required');
+      }
+
+      const res = await fetch('http://localhost:9007/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(userData),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Registration failed');
+      }
+
+      localStorage.setItem('wch_user', JSON.stringify(data.user));
+      localStorage.setItem('wch_token', data.token);
+      setUser(data.user);
+      return data.user;
     } catch (err) {
-      console.error('Token validation failed:', err);
-      return false;
+      setError(err.message);
+      throw err;
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -76,286 +78,62 @@ export const AuthProvider = ({ children }) => {
       setLoading(true);
       setError(null);
 
-      // Make actual API call to backend
-      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/auth/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: credentials.email,
-          password: credentials.password,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Login failed');
-      }
-
-      // Extract user data from response
-      const { token, user: userData } = data;
-      
-      const user = {
-        id: userData.id,
-        email: userData.email,
-        firstName: userData.firstName,
-        lastName: userData.lastName,
-        name: `${userData.firstName} ${userData.lastName}`.trim(),
-        type: userData.role,
-        profile: {
-          country: userData.country || '',
-          city: userData.city || '',
-          profileImage: userData.profileImage || '',
-          businessCertificate: userData.businessCertificate || null,
-        },
-        createdAt: userData.createdAt,
-        lastLogin: new Date().toISOString()
-      };
-
-      // Save to localStorage
-      localStorage.setItem('wch_user', JSON.stringify(user));
-      localStorage.setItem('wch_token', token);
-
-      setUser(user);
-      return user;
-
-    } catch (err) {
-      console.error('Login error:', err);
-      const errorMessage = err.message || 'Invalid email or password. Please try again.';
-      setError(errorMessage);
-      throw new Error(errorMessage);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const register = async (userData) => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      // Validate registration data
-      if (!userData.email || !userData.password) {
+      if (!credentials.email || !credentials.password) {
         throw new Error('Email and password are required');
       }
 
-      // Admin secret key validation (keep for frontend validation)
-      if (userData.userType === 'admin') {
-        const ADMIN_SECRET_KEY = '12345@#@@@@@@@@!!!!wwwgggh.';
-        if (!userData.secretKey || userData.secretKey !== ADMIN_SECRET_KEY) {
-          throw new Error('Invalid admin secret key. Please use the correct secret key.');
-        }
-      }
-
-      if (userData.userType === 'entrepreneur' && userData.gender !== 'female') {
-        throw new Error('Only female entrepreneurs can register');
-      }
-
-      // Prepare data for backend API
-      const registrationData = {
-        firstName: userData.firstName || userData.companyName,
-        lastName: userData.lastName || '',
-        email: userData.email,
-        password: userData.password,
-        role: userData.userType || 'entrepreneur',
-        country: userData.country,
-        city: userData.city,
-        gender: userData.gender,
-        companyName: userData.companyName,
-        companyWebsite: userData.companyWebsite,
-        contactInfo: userData.contactInfo
-      };
-
-      // Call real backend API
-      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/auth/register`, {
+      const res = await fetch('http://localhost:9007/api/auth/login', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(registrationData),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(credentials),
       });
 
-      const data = await response.json();
+      const data = await res.json();
 
-      if (!response.ok) {
-        throw new Error(data.message || data.error || 'Registration failed');
+      if (!res.ok) {
+        throw new Error(data.error || 'Login failed');
       }
 
-      // Backend returns { token, user } directly on success
-      const { user, token } = data;
-      
-      // Save to localStorage
-      localStorage.setItem('wch_user', JSON.stringify(user));
-      localStorage.setItem('wch_token', token);
-
-      setUser(user);
-      return user;
-
+      localStorage.setItem('wch_user', JSON.stringify(data.user));
+      localStorage.setItem('wch_token', data.token);
+      setUser(data.user);
+      return data.user;
     } catch (err) {
-      console.error('Registration error:', err);
-      const errorMessage = err.message || 'Registration failed. Please try again.';
-      setError(errorMessage);
-      throw new Error(errorMessage);
+      setError(err.message);
+      throw err;
     } finally {
       setLoading(false);
     }
   };
 
-  const logout = async () => {
-    try {
-      setLoading(true);
-
-      // Simulate API logout call
-      await new Promise(resolve => setTimeout(resolve, 300));
-
-      // Clear authentication data
-      clearAuthData();
-
-    } catch (err) {
-      console.error('Logout error:', err);
-      // Even if logout fails, clear local data
-      clearAuthData();
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const updateProfile = async (profileData) => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      const updatedUser = {
-        ...user,
-        ...profileData,
-        profile: {
-          ...user.profile,
-          ...profileData.profile
-        }
-      };
-
-      // Update localStorage
-      localStorage.setItem('wch_user', JSON.stringify(updatedUser));
-      setUser(updatedUser);
-
-      return updatedUser;
-
-    } catch (err) {
-      const errorMessage = 'Failed to update profile. Please try again.';
-      setError(errorMessage);
-      throw new Error(errorMessage);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const clearAuthData = () => {
+  const logout = () => {
     localStorage.removeItem('wch_user');
     localStorage.removeItem('wch_token');
     setUser(null);
-    setError(null);
   };
 
-  const resetPassword = async (_email) => {
-    try {
-      setLoading(true);
-      setError(null);
+  const clearError = () => setError(null);
 
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      // Mock successful response
-      return {
-        success: true,
-        message: 'Password reset link sent to your email'
-      };
-
-    } catch (err) {
-      const errorMessage = 'Failed to send reset email. Please try again.';
-      setError(errorMessage);
-      throw new Error(errorMessage);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const verifyEmail = async (_token) => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      // Update user verification status
-      if (user) {
-        const updatedUser = {
-          ...user,
-          emailVerified: true,
-          verifiedAt: new Date().toISOString()
-        };
-
-        localStorage.setItem('wch_user', JSON.stringify(updatedUser));
-        setUser(updatedUser);
-      }
-
-      return { success: true, message: 'Email verified successfully' };
-
-    } catch (err) {
-      const errorMessage = 'Email verification failed. Please try again.';
-      setError(errorMessage);
-      throw new Error(errorMessage);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Helper functions
   const isAuthenticated = () => !!user;
-  const isEntrepreneur = () => user?.type === 'entrepreneur';
-  const isInvestor = () => user?.type === 'investor';
-  const isAdmin = () => user?.type === 'admin';
-
-  const getAuthHeaders = () => {
-    const token = localStorage.getItem('wch_token');
-    return token ? { Authorization: `Bearer ${token}` } : {};
-  };
 
   const value = {
-    // State
     user,
     loading,
     error,
     isInitialized,
 
-    // Actions
-    login,
+    
     register,
+    login,
     logout,
-    updateProfile,
-    resetPassword,
-    verifyEmail,
-
-    // Utilities
+    clearError,
     isAuthenticated,
-    isEntrepreneur,
-    isInvestor,
-    isAdmin,
-    getAuthHeaders,
-    clearError: () => setError(null)
+
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
+
 
 // Higher-order component for protecting routes
 export const withAuth = (Component, allowedRoles = []) => {

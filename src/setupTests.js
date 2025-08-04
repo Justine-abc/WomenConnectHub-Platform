@@ -6,7 +6,7 @@
 import '@testing-library/jest-dom';
 
 // Mock environment variables for tests
-process.env.REACT_APP_API_BASE_URL = 'http://localhost:9004/api';
+process.env.REACT_APP_API_URL = 'http://localhost:5000/api';
 process.env.REACT_APP_ENV = 'test';
 
 // Global test utilities

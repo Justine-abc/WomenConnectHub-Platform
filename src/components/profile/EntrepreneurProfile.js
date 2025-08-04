@@ -11,15 +11,18 @@ const EntrepreneurProfile = () => {
   const [activeTab, setActiveTab] = useState('overview');
 
   useEffect(() => {
-    const loadProfileData = async () => {
-      setLoading(true);
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Mock profile data
-      const mockProfile = {
-        id: user?.id || 1,
+    loadProfileData();
+  }, []);
+
+  const loadProfileData = async () => {
+    setLoading(true);
+    
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    // Mock profile data
+    const mockProfile = {
+      id: user?.id || 1,
       firstName: user?.firstName || "Sarah",
       lastName: user?.lastName || "Wanjiku",
       email: user?.email || "sarah.wanjiku@example.com",
@@ -117,10 +120,7 @@ const EntrepreneurProfile = () => {
     setProjects(mockProjects);
     setAchievements(mockAchievements);
     setLoading(false);
-    };
-
-    loadProfileData();
-  }, []);
+  };
 
   const tabs = [
     { id: 'overview', label: 'Overview', icon: '👤' },

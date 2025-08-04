@@ -53,7 +53,9 @@ window.addEventListener('unhandledrejection', (event) => {
 
 // Development mode helpers
 if (process.env.NODE_ENV === 'development') {
+  // eslint-disable-next-line no-console
   console.log('🚀 WomenConnect Hub Platform - Development Mode');
+  // eslint-disable-next-line no-console
   console.log('📊 Performance monitoring enabled');
   
   // Add development-only global utilities

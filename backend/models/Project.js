@@ -8,7 +8,9 @@ const Project = sequelize.define("Project", {
   title: DataTypes.STRING,
   description: DataTypes.TEXT,
   location: DataTypes.STRING,
-  imageUrl: DataTypes.STRING,
+  email: DataTypes.STRING,
+  projectImage: DataTypes.STRING,
+  video: DataTypes.STRING,
 });
 
 module.exports = Project;
