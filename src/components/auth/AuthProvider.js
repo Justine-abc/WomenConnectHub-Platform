@@ -169,24 +169,33 @@ export const AuthProvider = ({ children }) => {
       };
 
       // Call real backend API
-      const response = await api.post('/auth/register', registrationData);
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/auth/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(registrationData),
+      });
 
-      if (response.data.success) {
-        const { user, token } = response.data;
-        
-        // Save to localStorage
-        localStorage.setItem('wch_user', JSON.stringify(user));
-        localStorage.setItem('wch_token', token);
+      const data = await response.json();
 
-        setUser(user);
-        return user;
-      } else {
-        throw new Error(response.data.message || 'Registration failed');
+      if (!response.ok) {
+        throw new Error(data.message || data.error || 'Registration failed');
       }
+
+      // Backend returns { token, user } directly on success
+      const { user, token } = data;
+      
+      // Save to localStorage
+      localStorage.setItem('wch_user', JSON.stringify(user));
+      localStorage.setItem('wch_token', token);
+
+      setUser(user);
+      return user;
 
     } catch (err) {
       console.error('Registration error:', err);
-      const errorMessage = err.response?.data?.message || err.message || 'Registration failed. Please try again.';
+      const errorMessage = err.message || 'Registration failed. Please try again.';
       setError(errorMessage);
       throw new Error(errorMessage);
     } finally {
