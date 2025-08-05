@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../auth/AuthProvider';
 
-const Header = ({ user, onLogout, currentPath = '/' }) => {
+const Header = ({ currentPath = '/' }) => {
+  const { user, logout, isAuthenticated } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
+
+  
 
   const closeMobileMenu = () => {
     setIsMobileMenuOpen(false);
@@ -49,21 +53,39 @@ const Header = ({ user, onLogout, currentPath = '/' }) => {
 
           {/* Right Section */}
           <div className="flex items-center space-x-4">
-            {user ? (
+            {isAuthenticated() ? (
               <div className="hidden md:flex items-center space-x-4">
-                <Link to="/dashboard" className="text-white no-underline py-2 px-4 rounded-md transition-colors hover:bg-white hover:bg-opacity-10">
-                  Dashboard
+                {user?.role === 'entrepreneur' && (
+                  <Link to="/entrepreneur-dashboard" className="text-white no-underline py-2 px-4 rounded-md transition-colors hover:bg-white hover:bg-opacity-10">
+                    Dashboard
+                  </Link>
+                )}
+                {user?.role === 'investor' && (
+                  <Link to="/investor-portal" className="text-white no-underline py-2 px-4 rounded-md transition-colors hover:bg-white hover:bg-opacity-10">
+                    Portal
+                  </Link>
+                )}
+                {user?.role === 'admin' && (
+                  <Link to="/admin-dashboard" className="text-white no-underline py-2 px-4 rounded-md transition-colors hover:bg-white hover:bg-opacity-10">
+                    Admin
+                  </Link>
+                )}
+                <Link to="/messages" className="text-white no-underline py-2 px-4 rounded-md transition-colors hover:bg-white hover:bg-opacity-10">
+                  Messages
                 </Link>
-                <button onClick={onLogout} className="border border-white text-white py-2 px-4 rounded-md cursor-pointer transition-all hover:bg-white hover:text-blue-800">
+                <span className="text-white text-sm">
+                  Hello, {user?.firstName || user?.name || 'User'}
+                </span>
+                <button onClick={logout} className="border border-white text-white py-2 px-4 rounded-md cursor-pointer transition-all hover:bg-white hover:text-blue-800">
                   Logout
                 </button>
               </div>
             ) : (
               <div className="hidden md:flex items-center space-x-4">
-                <Link to="/login" className="text-white no-underline py-2 px-4 rounded-md transition-colors hover:bg-white hover:bg-opacity-10">
+                <Link to="/auth" className="text-white no-underline py-2 px-4 rounded-md transition-colors hover:bg-white hover:bg-opacity-10">
                   Login
                 </Link>
-                <Link to="/register" className="bg-yellow-400 text-blue-800 no-underline py-2 px-4 rounded-md font-semibold transition-colors hover:bg-yellow-500">
+                <Link to="/auth" className="bg-yellow-400 text-blue-800 no-underline py-2 px-4 rounded-md font-semibold transition-colors hover:bg-yellow-500">
                   Sign Up
                 </Link>
               </div>
@@ -108,12 +130,27 @@ const Header = ({ user, onLogout, currentPath = '/' }) => {
                 Contact
               </Link>
               
-              {user ? (
+              {isAuthenticated() ? (
                 <>
-                  <Link to="/dashboard" className="text-white no-underline py-3 px-4 rounded-md transition-colors hover:bg-white hover:bg-opacity-10" onClick={closeMobileMenu}>
-                    Dashboard
+                  {user?.role === 'entrepreneur' && (
+                    <Link to="/entrepreneur-dashboard" className="text-white no-underline py-3 px-4 rounded-md transition-colors hover:bg-white hover:bg-opacity-10" onClick={closeMobileMenu}>
+                      Dashboard
+                    </Link>
+                  )}
+                  {user?.role === 'investor' && (
+                    <Link to="/investor-portal" className="text-white no-underline py-3 px-4 rounded-md transition-colors hover:bg-white hover:bg-opacity-10" onClick={closeMobileMenu}>
+                      Portal
+                    </Link>
+                  )}
+                  {user?.role === 'admin' && (
+                    <Link to="/admin-dashboard" className="text-white no-underline py-3 px-4 rounded-md transition-colors hover:bg-white hover:bg-opacity-10" onClick={closeMobileMenu}>
+                      Admin
+                    </Link>
+                  )}
+                  <Link to="/messages" className="text-white no-underline py-3 px-4 rounded-md transition-colors hover:bg-white hover:bg-opacity-10" onClick={closeMobileMenu}>
+                    Messages
                   </Link>
-                  <button onClick={onLogout} className="border border-white text-white py-3 px-4 rounded-md cursor-pointer transition-all hover:bg-white hover:text-blue-800 mt-2">
+                  <button onClick={logout} className="border border-white text-white py-3 px-4 rounded-md cursor-pointer transition-all hover:bg-white hover:text-blue-800 mt-2">
                     Logout
                   </button>
                 </>

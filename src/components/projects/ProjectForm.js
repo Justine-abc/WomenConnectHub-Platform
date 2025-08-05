@@ -14,8 +14,8 @@ const ProjectForm = ({ project = null, onSubmit, onCancel, isModal = false }) =>
     category: project?.category || '',
     imageUrl: project?.imageUrl || '',
     videoUrl: project?.videoUrl || '',
-    location: project?.location || user?.profile?.city || '',
-    country: project?.country || user?.profile?.country || '',
+    location: project?.location || user?.city || '',
+    country: project?.country || user?.country || '',
     fundingGoal: project?.fundingGoal || '',
     timeline: project?.timeline || '',
     businessPlan: project?.businessPlan || '',
@@ -116,9 +116,9 @@ const ProjectForm = ({ project = null, onSubmit, onCancel, isModal = false }) =>
         teamSize: parseInt(formData.teamSize),
         entrepreneur: {
           id: user.id,
-          name: user.name,
+          name: `${user.firstName} ${user.lastName}` || user.name,
           email: user.email,
-          location: `${user.profile.city}, ${user.profile.country}`
+          location: `${user.city || formData.city}, ${user.country || formData.country}`
         },
         status: 'draft',
         createdAt: new Date().toISOString(),
@@ -159,7 +159,7 @@ const ProjectForm = ({ project = null, onSubmit, onCancel, isModal = false }) =>
               value={formData.title}
               onChange={handleInputChange}
               placeholder="Enter your project title"
-              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-500 ${
                 errors.title ? 'border-red-500' : 'border-gray-300'
               }`}
             />
@@ -176,7 +176,7 @@ const ProjectForm = ({ project = null, onSubmit, onCancel, isModal = false }) =>
               onChange={handleInputChange}
               rows={5}
               placeholder="Describe your project in detail..."
-              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-500 ${
                 errors.description ? 'border-red-500' : 'border-gray-300'
               }`}
             />
@@ -196,7 +196,7 @@ const ProjectForm = ({ project = null, onSubmit, onCancel, isModal = false }) =>
               value={formData.email}
               onChange={handleInputChange}
               placeholder="your.email@example.com"
-              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-500 ${
                 errors.email ? 'border-red-500' : 'border-gray-300'
               }`}
             />
@@ -211,7 +211,7 @@ const ProjectForm = ({ project = null, onSubmit, onCancel, isModal = false }) =>
               name="category"
               value={formData.category}
               onChange={handleInputChange}
-              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 ${
                 errors.category ? 'border-red-500' : 'border-gray-300'
               }`}
             >
@@ -245,7 +245,7 @@ const ProjectForm = ({ project = null, onSubmit, onCancel, isModal = false }) =>
               value={formData.location}
               onChange={handleInputChange}
               placeholder="e.g., Nairobi"
-              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-500 ${
                 errors.location ? 'border-red-500' : 'border-gray-300'
               }`}
             />
@@ -260,7 +260,7 @@ const ProjectForm = ({ project = null, onSubmit, onCancel, isModal = false }) =>
               name="country"
               value={formData.country}
               onChange={handleInputChange}
-              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 ${
                 errors.country ? 'border-red-500' : 'border-gray-300'
               }`}
             >
@@ -290,7 +290,7 @@ const ProjectForm = ({ project = null, onSubmit, onCancel, isModal = false }) =>
               min={FUNDING_GOALS.MIN}
               max={FUNDING_GOALS.MAX}
               placeholder="e.g., 5000"
-              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-500 ${
                 errors.fundingGoal ? 'border-red-500' : 'border-gray-300'
               }`}
             />
@@ -308,7 +308,7 @@ const ProjectForm = ({ project = null, onSubmit, onCancel, isModal = false }) =>
               name="timeline"
               value={formData.timeline}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
             >
               <option value="">Select timeline</option>
               <option value="1-3 months">1-3 months</option>
@@ -339,7 +339,7 @@ const ProjectForm = ({ project = null, onSubmit, onCancel, isModal = false }) =>
               value={formData.imageUrl}
               onChange={handleInputChange}
               placeholder="https://drive.google.com/file/d/..."
-              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-500 ${
                 errors.imageUrl ? 'border-red-500' : 'border-gray-300'
               }`}
             />
@@ -359,7 +359,7 @@ const ProjectForm = ({ project = null, onSubmit, onCancel, isModal = false }) =>
               value={formData.videoUrl}
               onChange={handleInputChange}
               placeholder="https://www.youtube.com/watch?v=..."
-              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-500 ${
                 errors.videoUrl ? 'border-red-500' : 'border-gray-300'
               }`}
             />
@@ -379,7 +379,7 @@ const ProjectForm = ({ project = null, onSubmit, onCancel, isModal = false }) =>
               value={formData.businessPlan}
               onChange={handleInputChange}
               placeholder="https://drive.google.com/file/d/..."
-              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-500 ${
                 errors.businessPlan ? 'border-red-500' : 'border-gray-300'
               }`}
             />
@@ -409,7 +409,7 @@ const ProjectForm = ({ project = null, onSubmit, onCancel, isModal = false }) =>
               onChange={handleInputChange}
               rows={3}
               placeholder="Describe your target market and customer base..."
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-500"
             />
           </div>
 
@@ -423,7 +423,7 @@ const ProjectForm = ({ project = null, onSubmit, onCancel, isModal = false }) =>
               onChange={handleInputChange}
               rows={3}
               placeholder="What makes your project unique? What's your competitive advantage?"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-500"
             />
           </div>
 
@@ -436,7 +436,7 @@ const ProjectForm = ({ project = null, onSubmit, onCancel, isModal = false }) =>
                 name="teamSize"
                 value={formData.teamSize}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
               >
                 <option value={1}>Just me</option>
                 <option value={2}>2 people</option>
@@ -454,7 +454,7 @@ const ProjectForm = ({ project = null, onSubmit, onCancel, isModal = false }) =>
                 name="previousExperience"
                 value={formData.previousExperience}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
               >
                 <option value="">Select experience level</option>
                 <option value="first-time">First-time entrepreneur</option>

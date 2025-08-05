@@ -168,14 +168,18 @@ export const RISK_LEVELS = {
 };
 
 // Funding Goals
-export const FUNDING_GOALS = [
-  { min: 0, max: 5000, label: 'Under $5,000' },
-  { min: 5000, max: 10000, label: '$5,000 - $10,000' },
-  { min: 10000, max: 25000, label: '$10,000 - $25,000' },
-  { min: 25000, max: 50000, label: '$25,000 - $50,000' },
-  { min: 50000, max: 100000, label: '$50,000 - $100,000' },
-  { min: 100000, max: null, label: '$100,000+' },
-];
+export const FUNDING_GOALS = {
+  MIN: 1000,
+  MAX: 1000000,
+  RANGES: [
+    { min: 0, max: 5000, label: 'Under $5,000' },
+    { min: 5000, max: 10000, label: '$5,000 - $10,000' },
+    { min: 10000, max: 25000, label: '$10,000 - $25,000' },
+    { min: 25000, max: 50000, label: '$25,000 - $50,000' },
+    { min: 50000, max: 100000, label: '$50,000 - $100,000' },
+    { min: 100000, max: null, label: '$100,000+' },
+  ]
+};
 
 // Date Formats
 export const DATE_FORMATS = {
@@ -262,7 +266,7 @@ export const BREAKPOINTS = {
   '2XL': '1536px',
 };
 
-export default {
+const constants = {
   USER_TYPES,
   PROJECT_CATEGORIES,
   COUNTRIES,
@@ -287,3 +291,5 @@ export default {
   ANIMATION,
   BREAKPOINTS,
 };
+
+export default constants;

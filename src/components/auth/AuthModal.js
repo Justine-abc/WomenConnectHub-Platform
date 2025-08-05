@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from './AuthProvider';
+import { useNavigate } from 'react-router-dom';
 
 const ADMIN_SECRET_KEY = "12345@#@@@@@@@@!!!!wwwgggh.";
 
@@ -22,6 +23,7 @@ const initialFormData = {
 
 const AuthModal = () => {
   const { login, register } = useAuth();
+  const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
   const [userType, setUserType] = useState('entrepreneur');
   const [formData, setFormData] = useState(initialFormData);
@@ -33,6 +35,22 @@ const AuthModal = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
+    }
+  };
+
+  const redirectBasedOnRole = (user) => {
+    switch (user.role || user.type) {
+      case 'entrepreneur':
+        navigate('/entrepreneur-dashboard');
+        break;
+      case 'investor':
+        navigate('/investor-portal');
+        break;
+      case 'admin':
+        navigate('/admin-dashboard');
+        break;
+      default:
+        navigate('/'); // Default to home page
     }
   };
 
@@ -82,16 +100,30 @@ const AuthModal = () => {
     setLoading(true);
 
     try {
+      let user;
       if (isLogin) {
-        await login({ email: formData.email, password: formData.password });
+        user = await login({ email: formData.email, password: formData.password });
       } else {
         const registrationData = {
-          ...formData,
-          userType,
-          name: `${formData.firstName} ${formData.lastName}`.trim()
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          password: formData.password,
+          role: userType,
+          gender: formData.gender,
+          country: formData.country,
+          city: formData.city,
+          companyName: formData.companyName,
+          companyWebsite: formData.companyWebsite,
+          contactInfo: formData.contactInfo,
+          secretKey: formData.secretKey
         };
-        await register(registrationData);
+        user = await register(registrationData);
       }
+      
+      // Redirect user to appropriate dashboard based on their role
+      redirectBasedOnRole(user);
+      
     } catch (error) {
       setErrors({ general: error.message || 'An error occurred' });
     } finally {
@@ -200,7 +232,7 @@ const AuthModal = () => {
                     required
                     value={formData.firstName}
                     onChange={handleInputChange}
-                    className={`mt-1 block w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    className={`mt-1 block w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white ${
                       errors.firstName ? 'border-red-300' : 'border-gray-300'
                     }`}
                     placeholder="First name"
@@ -218,7 +250,7 @@ const AuthModal = () => {
                     required
                     value={formData.lastName}
                     onChange={handleInputChange}
-                    className={`mt-1 block w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    className={`mt-1 block w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white ${
                       errors.lastName ? 'border-red-300' : 'border-gray-300'
                     }`}
                     placeholder="Last name"
@@ -239,7 +271,7 @@ const AuthModal = () => {
                   name="gender"
                   value={formData.gender}
                   onChange={handleInputChange}
-                  className={`mt-1 block w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  className={`mt-1 block w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white ${
                     errors.gender ? 'border-red-300' : 'border-gray-300'
                   }`}
                 >
@@ -262,7 +294,7 @@ const AuthModal = () => {
                 required
                 value={formData.email}
                 onChange={handleInputChange}
-                className={`mt-1 block w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                className={`mt-1 block w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white ${
                   errors.email ? 'border-red-300' : 'border-gray-300'
                 }`}
                 placeholder="Enter your email"
@@ -282,7 +314,7 @@ const AuthModal = () => {
                 required
                 value={formData.password}
                 onChange={handleInputChange}
-                className={`mt-1 block w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                className={`mt-1 block w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white ${
                   errors.password ? 'border-red-300' : 'border-gray-300'
                 }`}
                 placeholder="Enter your password"
@@ -303,7 +335,7 @@ const AuthModal = () => {
                   required
                   value={formData.confirmPassword}
                   onChange={handleInputChange}
-                  className={`mt-1 block w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  className={`mt-1 block w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white ${
                     errors.confirmPassword ? 'border-red-300' : 'border-gray-300'
                   }`}
                   placeholder="Confirm your password"
@@ -325,7 +357,7 @@ const AuthModal = () => {
                   required
                   value={formData.profileImage}
                   onChange={handleInputChange}
-                  className={`mt-1 block w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  className={`mt-1 block w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white ${
                     errors.profileImage ? 'border-red-300' : 'border-gray-300'
                   }`}
                   placeholder="https://drive.google.com/file/d/..."
@@ -348,7 +380,7 @@ const AuthModal = () => {
                     required
                     value={formData.country}
                     onChange={handleInputChange}
-                    className={`mt-1 block w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    className={`mt-1 block w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white ${
                       errors.country ? 'border-red-300' : 'border-gray-300'
                     }`}
                     placeholder="Country"
@@ -366,7 +398,7 @@ const AuthModal = () => {
                     required
                     value={formData.city}
                     onChange={handleInputChange}
-                    className={`mt-1 block w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    className={`mt-1 block w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white ${
                       errors.city ? 'border-red-300' : 'border-gray-300'
                     }`}
                     placeholder="City"
@@ -389,7 +421,7 @@ const AuthModal = () => {
                   required
                   value={formData.businessCertificate}
                   onChange={handleInputChange}
-                  className={`mt-1 block w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  className={`mt-1 block w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white ${
                     errors.businessCertificate ? 'border-red-300' : 'border-gray-300'
                   }`}
                   placeholder="Business certificate link or file"
@@ -412,7 +444,7 @@ const AuthModal = () => {
                     required
                     value={formData.companyName}
                     onChange={handleInputChange}
-                    className={`mt-1 block w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    className={`mt-1 block w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white ${
                       errors.companyName ? 'border-red-300' : 'border-gray-300'
                     }`}
                     placeholder="Your company name"
@@ -431,7 +463,7 @@ const AuthModal = () => {
                     required
                     value={formData.contactInfo}
                     onChange={handleInputChange}
-                    className={`mt-1 block w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    className={`mt-1 block w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white ${
                       errors.contactInfo ? 'border-red-300' : 'border-gray-300'
                     }`}
                     placeholder="Phone number or email"
@@ -469,7 +501,7 @@ const AuthModal = () => {
                   required
                   value={formData.secretKey}
                   onChange={handleInputChange}
-                  className={`mt-1 block w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  className={`mt-1 block w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white ${
                     errors.secretKey ? 'border-red-300' : 'border-gray-300'
                   }`}
                   placeholder="Enter admin secret key"

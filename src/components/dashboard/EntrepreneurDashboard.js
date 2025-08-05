@@ -29,13 +29,15 @@ const EntrepreneurDashboard = () => {
         if (!projectsError && projectsData) {
           setMyProjects(projectsData);
           
-          // Calculate stats
-          const activeProjects = projectsData.filter(p => p.status === 'active').length;
-          const pendingProjects = projectsData.filter(p => p.status === 'pending').length;
-          const totalFunding = projectsData.reduce((sum, p) => sum + (p.raisedAmount || 0), 0);
+          // Calculate stats based on actual database schema
+          // Since we don't have status or raisedAmount fields yet, we'll use basic counts
+          const totalProjects = projectsData.length;
+          const activeProjects = projectsData.length; // All projects are considered active for now
+          const pendingProjects = 0; // No pending status in current schema
+          const totalFunding = 0; // No funding amount in current schema
 
           setStats({
-            totalProjects: projectsData.length,
+            totalProjects,
             activeProjects,
             pendingProjects,
             totalFunding
@@ -89,7 +91,7 @@ const EntrepreneurDashboard = () => {
             <div>
               <h1 className="text-3xl font-bold text-gray-900">Entrepreneur Dashboard</h1>
               <p className="text-gray-600 mt-1">
-                Welcome back, {user?.name}! Manage your projects and connect with investors.
+                Welcome back, {user?.firstName || user?.name || 'User'}! Manage your projects and connect with investors.
               </p>
             </div>
             
@@ -127,7 +129,7 @@ const EntrepreneurDashboard = () => {
           />
           <StatCard
             title="Total Raised"
-            value={`$${stats.totalFunding.toLocaleString()}`}
+            value={`$${(stats.totalFunding || 0).toLocaleString()}`}
             icon="💰"
             color="purple"
           />

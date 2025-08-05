@@ -5,7 +5,8 @@ const User = require("../models/User");
 require("dotenv").config();
 
 const register = async (req, res) => {
-  const { name, email, password, role } = req.body;
+  const { firstName, lastName, email, password, role, gender, country, city, companyName, companyWebsite, contactInfo, profileImage, businessCertificate, secretKey } = req.body;
+  console.log("Registering user:", req.body);
 
   try {
     // Check if user already exists
@@ -14,12 +15,23 @@ const register = async (req, res) => {
       return res.status(400).json({ error: "Email already in use" });
     }
 
+    // Validate required fields
+    if (!firstName || !lastName || !email || !password) {
+      return res.status(400).json({ error: "First name, last name, email, and password are required" });
+    }
+
+    // Admin secret key validation
+    if (role === 'admin' && secretKey !== "12345@#@@@@@@@@!!!!wwwgggh.") {
+      return res.status(400).json({ error: "Invalid admin secret key" });
+    }
+
     // Hash password
     const hashedPassword = bcrypt.hashSync(password, 10);
 
     // Create new user
     const user = await User.create({
-      name,
+      firstName,
+      lastName,
       email,
       password: hashedPassword,
       role: role || "entrepreneur",
@@ -33,7 +45,16 @@ const register = async (req, res) => {
     );
 
     // Send user and token back
-    res.status(201).json({ token, user: { id: user.id, name: user.name, email: user.email, role: user.role } });
+    res.status(201).json({ 
+      token, 
+      user: { 
+        id: user.id, 
+        firstName: user.firstName, 
+        lastName: user.lastName,
+        email: user.email, 
+        role: user.role 
+      } 
+    });
   } catch (error) {
     console.error("Register error:", error);
     res.status(500).json({ error: "Server error" });
@@ -64,7 +85,16 @@ const login = async (req, res) => {
     );
 
     // Send user and token back (exclude password)
-    res.status(200).json({ token, user: { id: user.id, name: user.name, email: user.email, role: user.role } });
+    res.status(200).json({ 
+      token, 
+      user: { 
+        id: user.id, 
+        firstName: user.firstName, 
+        lastName: user.lastName,
+        email: user.email, 
+        role: user.role 
+      } 
+    });
   } catch (error) {
     console.error("Login error:", error);
     res.status(500).json({ error: "Server error" });

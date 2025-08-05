@@ -5,7 +5,7 @@ const projectController = require("../controllers/projectController");
 const authenticate = require("../middleware/auth");
 const upload = require("../middleware/upload");
 
-router.post("/create", authenticate, upload.single("projectImage"), projectController.createProject);
+router.post("/", authenticate, upload.single("projectImage"), projectController.createProject);
 router.get("/", projectController.getAllProjects);
 router.get("/:id", projectController.getProjectById);
 router.put("/:id", authenticate, upload.single("projectImage"), projectController.updateProject);

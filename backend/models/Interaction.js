@@ -6,6 +6,9 @@ const Interaction = sequelize.define("Interaction", {
   userId: { type: DataTypes.INTEGER, allowNull: false },
   projectId: { type: DataTypes.INTEGER, allowNull: false },
   type: { type: DataTypes.STRING }, // e.g., 'view', 'like'
+}, {
+  tableName: 'Interactions',
+  timestamps: true,
 });
 
 module.exports = Interaction;

@@ -9,6 +9,9 @@ const InvestorProfile = sequelize.define("InvestorProfile", {
   website: DataTypes.STRING,
   country: DataTypes.STRING,
   city: DataTypes.STRING,
+}, {
+  tableName: 'InvestorProfiles',
+  timestamps: true,
 });
 
 module.exports = InvestorProfile;

@@ -9,6 +9,7 @@ const EntrepreneurProfile = sequelize.define("EntrepreneurProfile", {
   skills: { type: DataTypes.STRING },
   businessCertificate: { type: DataTypes.STRING },
 }, {
+  tableName: 'EntrepreneurProfiles',
   timestamps: true,
 });
 

@@ -4,13 +4,23 @@ const Project = require("../models/Project");
 // Create a new project
 const createProject = async (req, res) => {
   try {
+    console.log('Create project request from user:', req.user?.id, req.user?.email);
+    console.log('Request body:', req.body);
+    
+    if (!req.user) {
+      return res.status(401).json({ error: 'User not authenticated' });
+    }
+
     const project = await Project.create({
       ...req.body,
-      projectImage: req.file ? req.file.path : null,
-      userId: req.user.id
+      imageUrl: req.file ? req.file.path : null,
+      userId: req.user.id // Always use authenticated user's ID
     });
+    
+    console.log('Project created successfully:', project.id);
     res.status(201).json(project);
   } catch (error) {
+    console.error('Create project error:', error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -18,9 +28,22 @@ const createProject = async (req, res) => {
 // Get all projects
 const getAllProjects = async (req, res) => {
   try {
-    const projects = await Project.findAll();
+    const { userId } = req.query;
+    
+    // Build where clause based on query parameters
+    const whereClause = {};
+    if (userId) {
+      whereClause.userId = userId;
+    }
+    
+    const projects = await Project.findAll({
+      where: whereClause,
+      order: [['createdAt', 'DESC']] // Show newest projects first
+    });
+    
     res.status(200).json(projects);
   } catch (error) {
+    console.error('Get projects error:', error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -47,10 +70,11 @@ const updateProject = async (req, res) => {
     }
     await project.update({
       ...req.body,
-      projectImage: req.file ? req.file.path : project.projectImage
+      imageUrl: req.file ? req.file.path : project.imageUrl
     });
     res.status(200).json(project);
   } catch (error) {
+    console.error('Update project error:', error);
     res.status(500).json({ error: error.message });
   }
 };

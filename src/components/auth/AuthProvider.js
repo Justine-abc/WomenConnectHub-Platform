@@ -45,11 +45,11 @@ export const AuthProvider = ({ children }) => {
       setLoading(true);
       setError(null);
 
-      if (!userData.email || !userData.password || !userData.name) {
-        throw new Error('Name, email, and password are required');
+      if (!userData.email || !userData.password || !userData.firstName || !userData.lastName) {
+        throw new Error('First name, last name, email, and password are required');
       }
 
-      const res = await fetch('http://localhost:9007/api/auth/register', {
+      const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(userData),
@@ -82,7 +82,7 @@ export const AuthProvider = ({ children }) => {
         throw new Error('Email and password are required');
       }
 
-      const res = await fetch('http://localhost:9007/api/auth/login', {
+      const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(credentials),

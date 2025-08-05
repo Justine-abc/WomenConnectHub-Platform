@@ -104,6 +104,11 @@ const ProfileForm = ({ onSave, onCancel }) => {
       setFormData(prev => ({ ...prev, [name]: value }));
     }
     
+    // Update image preview when profile image URL changes
+    if (name === 'profileImage') {
+      setImagePreview(value);
+    }
+    
     // Clear validation error
     if (validationErrors[name]) {
       setValidationErrors(prev => ({ ...prev, [name]: '' }));
@@ -267,7 +272,7 @@ const ProfileForm = ({ onSave, onCancel }) => {
                 name="firstName"
                 value={formData.firstName}
                 onChange={handleInputChange}
-                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 ${
                   validationErrors.firstName ? 'border-red-500' : 'border-gray-300'
                 }`}
               />
@@ -285,7 +290,7 @@ const ProfileForm = ({ onSave, onCancel }) => {
                 name="lastName"
                 value={formData.lastName}
                 onChange={handleInputChange}
-                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 ${
                   validationErrors.lastName ? 'border-red-500' : 'border-gray-300'
                 }`}
               />
@@ -303,7 +308,7 @@ const ProfileForm = ({ onSave, onCancel }) => {
                 name="email"
                 value={formData.email}
                 onChange={handleInputChange}
-                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 ${
                   validationErrors.email ? 'border-red-500' : 'border-gray-300'
                 }`}
               />
@@ -322,12 +327,25 @@ const ProfileForm = ({ onSave, onCancel }) => {
                 value={formData.profileImage}
                 onChange={handleInputChange}
                 placeholder="https://drive.google.com/file/d/..."
-                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-500 ${
                   validationErrors.profileImage ? 'border-red-500' : 'border-gray-300'
                 }`}
               />
               {validationErrors.profileImage && (
                 <p className="text-red-500 text-sm mt-1">{validationErrors.profileImage}</p>
+              )}
+              {imagePreview && (
+                <div className="mt-2">
+                  <p className="text-sm text-gray-600 mb-1">Preview:</p>
+                  <img 
+                    src={imagePreview} 
+                    alt="Profile preview" 
+                    className="w-20 h-20 object-cover rounded-full border border-gray-300"
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                    }}
+                  />
+                </div>
               )}
             </div>
 
@@ -339,7 +357,7 @@ const ProfileForm = ({ onSave, onCancel }) => {
                 name="country"
                 value={formData.country}
                 onChange={handleInputChange}
-                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 ${
                   validationErrors.country ? 'border-red-500' : 'border-gray-300'
                 }`}
               >
@@ -362,7 +380,7 @@ const ProfileForm = ({ onSave, onCancel }) => {
                 name="city"
                 value={formData.city}
                 onChange={handleInputChange}
-                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 ${
                   validationErrors.city ? 'border-red-500' : 'border-gray-300'
                 }`}
               />
@@ -388,7 +406,7 @@ const ProfileForm = ({ onSave, onCancel }) => {
                   name="businessName"
                   value={formData.businessName}
                   onChange={handleInputChange}
-                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 ${
                     validationErrors.businessName ? 'border-red-500' : 'border-gray-300'
                   }`}
                 />
@@ -405,7 +423,7 @@ const ProfileForm = ({ onSave, onCancel }) => {
                   name="businessCategory"
                   value={formData.businessCategory}
                   onChange={handleInputChange}
-                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 ${
                     validationErrors.businessCategory ? 'border-red-500' : 'border-gray-300'
                   }`}
                 >
@@ -429,7 +447,7 @@ const ProfileForm = ({ onSave, onCancel }) => {
                   onChange={handleInputChange}
                   rows={4}
                   placeholder="Describe your business, mission, and goals..."
-                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 ${
                     validationErrors.businessDescription ? 'border-red-500' : 'border-gray-300'
                   }`}
                 />
@@ -448,7 +466,7 @@ const ProfileForm = ({ onSave, onCancel }) => {
                   value={formData.website}
                   onChange={handleInputChange}
                   placeholder="https://yourbusiness.com"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
                 />
               </div>
 
@@ -462,7 +480,7 @@ const ProfileForm = ({ onSave, onCancel }) => {
                   value={formData.businessCertificate}
                   onChange={handleInputChange}
                   placeholder="https://drive.google.com/file/d/..."
-                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 ${
                     validationErrors.businessCertificate ? 'border-red-500' : 'border-gray-300'
                   }`}
                 />
@@ -484,7 +502,7 @@ const ProfileForm = ({ onSave, onCancel }) => {
                     value={formData.socialMedia.linkedin}
                     onChange={handleInputChange}
                     placeholder="https://linkedin.com/in/yourprofile"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
                   />
                 </div>
                 <div>
@@ -495,7 +513,7 @@ const ProfileForm = ({ onSave, onCancel }) => {
                     value={formData.socialMedia.twitter}
                     onChange={handleInputChange}
                     placeholder="https://twitter.com/yourusername"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
                   />
                 </div>
                 <div>
@@ -506,7 +524,7 @@ const ProfileForm = ({ onSave, onCancel }) => {
                     value={formData.socialMedia.instagram}
                     onChange={handleInputChange}
                     placeholder="https://instagram.com/yourusername"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
                   />
                 </div>
                 <div>
@@ -517,7 +535,7 @@ const ProfileForm = ({ onSave, onCancel }) => {
                     value={formData.socialMedia.facebook}
                     onChange={handleInputChange}
                     placeholder="https://facebook.com/yourpage"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
                   />
                 </div>
               </div>
@@ -540,7 +558,7 @@ const ProfileForm = ({ onSave, onCancel }) => {
                   name="companyName"
                   value={formData.companyName}
                   onChange={handleInputChange}
-                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 ${
                     validationErrors.companyName ? 'border-red-500' : 'border-gray-300'
                   }`}
                 />
@@ -557,7 +575,7 @@ const ProfileForm = ({ onSave, onCancel }) => {
                   name="investmentCapacity"
                   value={formData.investmentCapacity}
                   onChange={handleInputChange}
-                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 ${
                     validationErrors.investmentCapacity ? 'border-red-500' : 'border-gray-300'
                   }`}
                 >
@@ -581,7 +599,7 @@ const ProfileForm = ({ onSave, onCancel }) => {
                   name="riskTolerance"
                   value={formData.riskTolerance}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
                 >
                   <option value="">Select Risk Level</option>
                   <option value="low">Low Risk</option>
@@ -600,7 +618,7 @@ const ProfileForm = ({ onSave, onCancel }) => {
                   value={formData.contactInfo}
                   onChange={handleInputChange}
                   placeholder="Phone number or preferred contact method"
-                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 ${
                     validationErrors.contactInfo ? 'border-red-500' : 'border-gray-300'
                   }`}
                 />
@@ -647,7 +665,7 @@ const ProfileForm = ({ onSave, onCancel }) => {
                   name="department"
                   value={formData.department}
                   onChange={handleInputChange}
-                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 ${
                     validationErrors.department ? 'border-red-500' : 'border-gray-300'
                   }`}
                 >
@@ -674,7 +692,7 @@ const ProfileForm = ({ onSave, onCancel }) => {
                   value={formData.role}
                   onChange={handleInputChange}
                   placeholder="e.g., Platform Administrator, Finance Manager"
-                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 ${
                     validationErrors.role ? 'border-red-500' : 'border-gray-300'
                   }`}
                 />
