@@ -2,7 +2,7 @@ import React from 'react';
 import { createGoogleDriveViewUrl } from '../../utils/urlHelpers';
 
 const ProjectCard = ({ project, onClick, className = "" }) => {
-  // Handle case where project might be undefined
+  
   if (!project) {
     return (
       <div className={`bg-white rounded-xl shadow-md p-6 ${className}`}>
@@ -39,7 +39,6 @@ const ProjectCard = ({ project, onClick, className = "" }) => {
       className={`bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:-translate-y-1 ${className}`}
       onClick={handleClick}
     >
-      {/* Project Image */}
       <div className="relative overflow-hidden rounded-t-xl">
         {imageUrl ? (
           <img 
@@ -60,7 +59,6 @@ const ProjectCard = ({ project, onClick, className = "" }) => {
           </div>
         </div>
         
-        {/* Category Badge */}
         {project.category && (
           <div className="absolute top-3 left-3">
             <span className="bg-blue-600 text-white px-2 py-1 rounded-full text-xs font-medium">
@@ -69,7 +67,6 @@ const ProjectCard = ({ project, onClick, className = "" }) => {
           </div>
         )}
 
-        {/* Status Badge */}
         {project.status && (
           <div className="absolute top-3 right-3">
             <span className={`px-2 py-1 rounded-full text-xs font-medium ${
@@ -85,17 +82,14 @@ const ProjectCard = ({ project, onClick, className = "" }) => {
       </div>
       
       <div className="p-5">
-        {/* Project Title */}
         <h3 className="font-bold text-lg text-gray-900 mb-2 leading-tight">
           {project.title || 'Untitled Project'}
         </h3>
         
-        {/* Project Description */}
         <p className="text-gray-600 text-sm mb-4 leading-relaxed overflow-hidden" style={{ display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical' }}>
           {project.description || 'No description available'}
         </p>
         
-        {/* Funding Progress */}
         {project.fundingGoal && (
           <div className="mb-4">
             <div className="flex justify-between items-center mb-2">
@@ -121,7 +115,6 @@ const ProjectCard = ({ project, onClick, className = "" }) => {
           </div>
         )}
         
-        {/* Location */}
         {project.location && (
           <div className="flex items-center gap-2 mb-4">
             <span className="text-gray-400">📍</span>
@@ -129,7 +122,6 @@ const ProjectCard = ({ project, onClick, className = "" }) => {
           </div>
         )}
         
-        {/* Entrepreneur Info */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-semibold text-sm">
@@ -145,15 +137,10 @@ const ProjectCard = ({ project, onClick, className = "" }) => {
             </div>
           </div>
           
-          {/* Action Buttons */}
           <div className="flex gap-2">
             <button 
               className="p-2 text-gray-400 hover:text-red-500 transition-colors"
-              onClick={(e) => {
-                e.stopPropagation();
-                // Handle bookmark/favorite
-                console.log('Bookmarked project:', project.id);
-              }}
+              onClick={(e) => e.stopPropagation()}
               title="Bookmark project"
               aria-label="Bookmark project"
             >
@@ -164,11 +151,7 @@ const ProjectCard = ({ project, onClick, className = "" }) => {
             
             <button 
               className="p-2 text-gray-400 hover:text-blue-500 transition-colors"
-              onClick={(e) => {
-                e.stopPropagation();
-                // Handle share
-                console.log('Shared project:', project.id);
-              }}
+              onClick={(e) => e.stopPropagation()}
               title="Share project"
               aria-label="Share project"
             >
@@ -179,15 +162,10 @@ const ProjectCard = ({ project, onClick, className = "" }) => {
           </div>
         </div>
 
-        {/* Invest Button */}
         <div className="mt-4 pt-4 border-t border-gray-100">
           <button 
             className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200 transform hover:scale-105"
-            onClick={(e) => {
-              e.stopPropagation();
-              // Handle invest action
-              console.log('Invest clicked for project:', project.id);
-            }}
+            onClick={(e) => e.stopPropagation()}
           >
             💰 Invest Now
           </button>

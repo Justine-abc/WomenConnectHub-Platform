@@ -1,4 +1,5 @@
 // models/index.js
+require("dotenv").config();
 const sequelize = require("../config/database");
 const User = require("./User");
 const Project = require("./Project");
